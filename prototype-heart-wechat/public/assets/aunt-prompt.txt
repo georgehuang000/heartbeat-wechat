@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: individual transparent avatar for a galgame dialogue configuration character selector.
+Input image 1 is the selected UI mockup used only as visual style and character reference. Recreate only the SECOND portrait from the left in the right-side CONFIG character row, labeled 阿姨; do not recreate any UI.
+Subject: one clearly middle-aged adult woman around 45 years old, with warm brown shoulder-length short hair, soft side part, gentle warm smile, mature facial features, ordinary pale cream/light pink blouse, fully clothed.
+Style: polished Japanese galgame portrait illustration; soft pastel palette, fine clean outlines, delicate blush, soft shaded hair and skin, matching the supplied reference.
+Composition: 400x400 square asset, front-facing single person head-and-shoulders portrait, centered, show entire head with comfortable margin, shoulders and upper chest at bottom, no cut-off hair.
+Backdrop: genuine transparent alpha background.
+Constraints: one adult woman only, no text, no labels, no UI, no frame, no logos, no watermark, no other people, no props. She must visibly read as a mature adult woman, not a teenager. Preserve warm brown short hair and gentle expression of the referenced second CONFIG avatar.

@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-10-14",
+  "mode": "built_in_image_gen",
+  "selected_design": "docs/design/settings-redesign-2026-10-14/option-1.png",
+  "purpose": "Sparse pale-pink sakura corner decoration; separated petals may be cropped in CSS for tiny divider accents.",
+  "transparent_background": true,
+  "asset": "sakura-corner-v1.png",
+  "source_original": "C:/Users/q9801/.codex/generated_images/01a1394c-e567-74a3-8cd4-2d872052bfe0/exec-cae7bddf-dbd5-41f7-a97f-79aa7e8cb9f2.png",
+  "prompt": "Use case: stylized-concept.\nAsset type: one transparent raster decorative corner asset for a pale pink galgame settings panel.\nPrimary request: a sparse, delicate cherry blossom twig entering from the top-right corner, curving down and left; only 2–3 small five-petaled sakura flowers plus a few clean separate falling petals.\nStyle: refined Japanese visual novel UI illustration, very fine smooth lines with soft pale watercolor petal shading, polished and clean at tiny interface sizes.\nComposition: square canvas, twig and blossoms mainly in the upper-right quadrant, airy negative space over the remaining three quarters; petals separated enough to reuse small crops as divider accents. The branch enters at the right edge near the top, flowers face the viewer. Avoid a dense cluster.\nPalette: extremely pale blush pink, pastel rose, slightly darker dusty-rose twig, tiny muted peach stamens; no dark black/brown outlines, no saturated magenta, no green leaves.\nBackground: true transparent alpha, no white or pink filled background, no baked checkerboard.\nConstraints: single decorative asset only; no text, no letters, no UI, no icons, no frame, no logo, no drop shadow, no glow, no watermark."
+}

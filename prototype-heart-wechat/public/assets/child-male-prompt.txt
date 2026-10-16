@@ -1,0 +1,13 @@
+Use case: stylized-concept
+Asset type: original child boy character head-and-shoulders avatar for a chat assistant character library.
+Input images: D:/1项目/微信聊天对话选项/prototype-heart-wechat/public/assets/sister.png is a STYLE ONLY reference, for delicate linework, soft shading, color finish. Do not borrow the adult woman's identity, adult proportions, makeup or adult styling.
+Primary request: Draw one original nonsexual child boy who looks clearly 10–12 years old, with short tidy dark brown hair, a friendly gentle smile, youthful rounded cheeks and small child shoulders. He is wearing a loose modest blue-and-white everyday hoodie, completely clothed.
+Style/medium: refined soft Japanese/Chinese visual-novel anime illustration, delicate crisp linework, smooth subtle cel shading, naturally warm skin tones and restrained highlights, visually coherent with the provided reference illustration.
+Composition/framing: square canvas intended for 400x400 portrait consumption. One centered single boy, head and upper shoulders / upper chest. Entire head and hair fully inside the canvas with comfortable transparent margin above and beside the hair. No cropped head. Modest relaxed friendly pose.
+Scene/backdrop: genuinely transparent background with alpha, no scene and no painted checkerboard.
+Constraints: clearly a child in age, face and body proportions; nonsexual everyday character design; no adult styling; fully clothed loose casual blue-white hoodie; one person only; no text, UI, labels, border, icon, logo or watermark; no props or accessories.
+
+Generation mode: built-in image_gen, transparent_background=true
+Reference path: D:/1项目/微信聊天对话选项/prototype-heart-wechat/public/assets/sister.png
+Original output: C:/Users/q9801/.codex/generated_images/01a123d7-62c2-7882-9ae4-f2807ecfe610/exec-c2317c81-be85-41e6-9cb5-ef6c5a1eeb85.png
+Process note: first built-in call failed with connection error; built-in retry succeeded.

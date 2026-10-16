@@ -1,0 +1,9 @@
+Use case: stylized-concept
+Asset type: original adult young man avatar for a character library.
+Create exactly one clearly adult young man approximately 21 years old with tidy short black hair, a relaxed friendly smile, adult young-man facial proportions and shoulders. He wears a modest light-blue casual collared shirt. Show a centered head-and-shoulders / upper-chest portrait.
+Style: polished delicate Japanese visual-novel anime illustration, fine clean linework, gentle subtle cel shading, soft natural warm skin tones and restrained highlights, coherent with a soft refined anime avatar library.
+Square canvas intended for 400x400 consumption. Keep the entire head and hair inside the canvas, with clear margin above and beside the hair. Adult facial features and proportions should distinguish him from a younger schoolboy.
+Genuinely transparent alpha background. One person only, no scene, props, text, UI, border, logo or watermark. Ordinary fully clothed casual portrait.
+
+Generation mode: built-in image_gen, transparent_background=true
+Original output: C:/Users/q9801/.codex/generated_images/01a123d7-62c2-7882-9ae4-f2807ecfe610/exec-c8886dc8-1515-4584-9631-814c668a1564.png

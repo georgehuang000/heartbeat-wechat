@@ -1,0 +1,5 @@
+# Install only into an independent Python 3.12 environment.
+-r requirements.txt
+Pillow==11.3.0
+cryptography==45.0.6
+zstandard==0.25.0

@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: original mature female character avatar for a friendly dialogue interface.
+Create one clearly middle-aged woman around forty years old, with dark brown almost black shoulder-length hair, warm mature facial contours, subtle natural smile lines around the eyes, and a gentle friendly smile. She must visibly read as a forty-year-old adult woman rather than a twenty-year-old girl. Refined natural face, no glamorous makeup.
+Clothing: modest soft pale pink high-neck knitted sweater, comfortably covering shoulders and upper torso.
+Style: polished gentle Japanese visual novel / galgame character illustration, fine clean outlines, delicate pastel coloring, soft hair and skin shading, warm even lighting, consistent with a softly rendered brown-haired child avatar in a pink hoodie and teen avatar in a lavender athletic jacket.
+Composition: square canvas, centered front-facing head-and-shoulders upper-body portrait, entire head and hair comfortably inside the frame with margin. Suitable for 400×400 display.
+Background: genuinely transparent alpha background.
+Constraints: one adult woman only, mature facial anatomy and subtle age detail, no text, no UI, no logos, no watermark, no frame, no props, no other people.

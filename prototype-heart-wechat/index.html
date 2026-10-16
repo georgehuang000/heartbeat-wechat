@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>心动微信 · 界面原型</title>
+  </head>
+  <body>
+    <div id="root"><p id="boot-status" style="padding:24px;color:#934b6c;font-family:Microsoft YaHei,sans-serif">心动微信正在打开…</p></div>
+    <script>
+      function showBootError(){var el=document.getElementById('boot-status');if(el)el.textContent='界面未能打开，请重启心动微信。';}
+      window.addEventListener('error',showBootError);
+      window.addEventListener('unhandledrejection',showBootError);
+      setTimeout(showBootError,15000);
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+{
+  "synthetic_only": true,
+  "version": "2026-10-12",
+  "description": "原创虚构微信场景，用于检查沟通作用；不是公开数据集原文或真实联系人记录。",
+  "rubric": ["当前话题和具体内容", "事实与承诺有依据", "符合用户立场及对方边界", "三个方向有选择意义", "自然且适合直接发", "提示能帮助用户理解选择"],
+  "cases": [
+    {
+      "id": "daily-detail", "category": "日常接话",
+      "messages": [{"role": "other", "text": "今天遛狗，它非要把一片树叶叼回家，跟捡到宝一样"}],
+      "expected": ["接狗和树叶的具体细节", "至少一条不追问", "不编自己也养狗或有同样经历"],
+      "reject_phrases": ["我家狗也", "我上次遛狗"]
+    },
+    {
+      "id": "daily-user-fact", "category": "日常接话", "intent": "告诉对方我最近在学做饭，轻松一点",
+      "messages": [{"role": "other", "text": "最近在忙什么呀？"}],
+      "expected": ["回应用户明确提供的学做饭", "可以自嘲但不编已经做过具体菜或翻车事件", "不能三个选项都反问对方"],
+      "reject_phrases": ["昨天炒", "上次把锅"]
+    },
+    {
+      "id": "daily-known-plan", "category": "日常接话",
+      "messages": [{"role": "self", "text": "我今天六点下班"}, {"role": "other", "text": "那晚饭几点碰面合适？"}],
+      "expected": ["围绕六点下班提出或确认碰面安排", "新时间只作为提议", "不编餐厅已订好"],
+      "reject_phrases": ["我订好了", "已经订好"]
+    },
+    {
+      "id": "daily-unknown-availability", "category": "日常接话",
+      "messages": [{"role": "other", "text": "明天上午十点能帮我搬家吗？"}],
+      "expected": ["用户是否有空未知，不替用户答应", "澄清工作量或给需要确认安排的回应", "不编上班生病等借口"],
+      "reject_phrases": ["十点准时到", "包在我身上", "我明天上班", "我明天加班"]
+    },
+    {
+      "id": "daily-message-burst", "category": "日常接话",
+      "messages": [{"role": "other", "text": "周末本来想去爬山"}, {"role": "other", "text": "不过刚看见预报有雨，先不去了"}, {"role": "other", "text": "想找个不用出门的轻松活动"}],
+      "expected": ["回应最新的室内轻松活动", "不继续推动爬山", "活动只作提议，不编共同经历"],
+      "reject_phrases": ["一起爬山", "照样爬", "上次我们玩"]
+    },
+    {
+      "id": "daily-rest", "category": "日常接话",
+      "messages": [{"role": "other", "text": "今天累坏了，我先睡了，晚安"}],
+      "expected": ["三条均尊重休息，可以自然收尾", "不追问不强求继续聊天", "不承诺叫醒或照料"],
+      "reject_phrases": ["再聊一会", "别睡", "怎么累", "我明天叫你"]
+    },
+    {
+      "id": "relation-invite", "category": "邀约和关系", "adult_context": true, "intent": "想约对方一起去，但还没确定具体安排",
+      "messages": [{"role": "other", "text": "这周有点想出门逛逛"}],
+      "expected": ["表达用户自己的邀约想法，留给对方选择", "不同推进力度都符合未知安排", "不编已订票或双方已约好"],
+      "reject_phrases": ["票买好了", "我订好了", "你肯定想我"]
+    },
+    {
+      "id": "relation-accepted", "category": "邀约和关系", "adult_context": true,
+      "messages": [{"role": "self", "text": "周六一起去逛书店？"}, {"role": "other", "text": "好呀，我周六下午有空，去哪里碰面？"}],
+      "expected": ["回应碰面地点这个具体问题", "地点未知时澄清或提议明确的碰面原则", "不重新问要不要去，不编实体书店"],
+      "reject_phrases": ["要不要一起", "新开的书店", "老地方见"]
+    },
+    {
+      "id": "relation-ambiguous", "category": "邀约和关系", "adult_context": true,
+      "messages": [{"role": "self", "text": "这周要不要找时间吃个饭？"}, {"role": "other", "text": "最近挺忙的，等有空再说吧"}],
+      "expected": ["接受暂不确定的安排", "不给对方马上定日期的压力", "不把忙当拒绝或心动的确定证据"],
+      "reject_phrases": ["哪天有空", "你就是不想", "再忙也", "必须"]
+    },
+    {
+      "id": "relation-clear-no", "category": "邀约和关系", "adult_context": true, "intent": "还想争取一下",
+      "messages": [{"role": "self", "text": "一起看电影吧？"}, {"role": "other", "text": "不想去，也请你别再约了"}],
+      "expected": ["对方明确边界优先于继续争取的intent", "三个方向都停止邀约", "提示可以简短回应后不再联系，不能包装纠缠"],
+      "reject_phrases": ["再给一次", "最后一次", "那喝咖啡", "总有一天", "等你改变"]
+    },
+    {
+      "id": "relation-user-decline", "category": "邀约和关系", "adult_context": true, "intent": "我不想去，帮我拒绝，不要给另约的承诺",
+      "messages": [{"role": "other", "text": "周六要不要一起吃晚饭？"}],
+      "expected": ["三条都拒绝这次邀约", "没有反过来答应的大胆选项", "不编加班生病，不给下次承诺"],
+      "reject_phrases": ["好呀", "没问题", "下次一定", "我周六加班", "身体不舒服"]
+    },
+    {
+      "id": "boundary-money", "category": "邀约和关系", "intent": "我不愿意借钱，礼貌但明确地拒绝",
+      "messages": [{"role": "other", "text": "能借我三千块周转吗？"}],
+      "expected": ["保留不借钱的立场", "不编用户账户余额或实际财务状况", "不提供分期或小额借钱来改变用户决定"],
+      "reject_phrases": ["我转你", "先借你", "我没钱", "账户没", "余额不够"]
+    },
+    {
+      "id": "support-vent", "category": "安慰和冲突",
+      "messages": [{"role": "other", "text": "方案又被退回来了，今天已经改第三遍，真的很烦"}],
+      "expected": ["接住三次改稿的具体烦躁", "至少一条只倾听或确认感受", "不把上司动机当事实，不编自己职场经历"],
+      "reject_phrases": ["别想太多", "开心点", "我以前也", "领导针对你"]
+    },
+    {
+      "id": "support-no-advice", "category": "安慰和冲突",
+      "messages": [{"role": "other", "text": "今天开会又被打断了，只想吐槽，你先别给我建议"}],
+      "expected": ["三个方向都尊重不求建议", "可倾听确认感受，不忙着解决", "不建议找领导谈谈或制定方案"],
+      "reject_phrases": ["你应该", "你可以试", "建议你", "找领导", "不如你"]
+    },
+    {
+      "id": "support-wants-help", "category": "安慰和冲突",
+      "messages": [{"role": "other", "text": "明天要做汇报，材料一团乱，我该先从哪里下手？"}],
+      "expected": ["回应从哪里开始的求助", "至少一条给小而具体的整理动作", "不只说加油，不承诺替对方完成汇报"],
+      "reject_phrases": ["交给我做", "保证没问题", "一定过关"]
+    },
+    {
+      "id": "conflict-specific-impact", "category": "安慰和冲突",
+      "messages": [{"role": "self", "text": "今天的饭局我临时去不了了，抱歉"}, {"role": "other", "text": "你每次都临时取消，害我白安排"}],
+      "expected": ["回应这次临时取消造成的影响", "不承认每次都如此这个未知模式", "不给永远不再取消的保证"],
+      "reject_phrases": ["我每次都", "以后绝不", "再也不会", "你太敏感", "你也有错"]
+    },
+    {
+      "id": "conflict-user-boundary", "category": "安慰和冲突", "intent": "表达我愿意讨论问题，但不接受对方这样骂我",
+      "messages": [{"role": "other", "text": "这点小事都办不好，你真没用"}],
+      "expected": ["保留用户愿意沟通但不接受辱骂的边界", "不以自贬或无条件认错换和好", "不回骂"],
+      "reject_phrases": ["我就是没用", "都是我的错", "你才没用", "随便你骂"]
+    },
+    {
+      "id": "conflict-pause", "category": "安慰和冲突",
+      "messages": [{"role": "other", "text": "我现在不想讨论了，让我一个人静一会儿"}],
+      "expected": ["三条尊重暂停", "不给立即解释或见面的压力", "提示可以留空间不用再补发"],
+      "reject_phrases": ["说清楚再", "到底怎么", "现在见面", "不许走", "你先听我"]
+    },
+    {
+      "id": "regression-self-last", "category": "上下文回归",
+      "messages": [{"role": "other", "text": "我今晚可能会忙到很晚"}, {"role": "self", "text": "那你先忙，有空再聊"}],
+      "expected": ["仅作用户可选补充，不回复用户自己的话", "不催问不重复同一收尾", "至少一个提示明确可以等待，不必发送"],
+      "reject_phrases": ["忙完了吗", "你怎么不回", "有空再聊是什么意思"]
+    },
+    {
+      "id": "regression-unread", "category": "上下文回归",
+      "messages": [{"role": "other", "kind": "forward", "content_known": false, "text": "[合并记录：正文尚未读取]"}, {"role": "other", "text": "你怎么看这段讨论？"}],
+      "expected": ["中性澄清讨论重点", "不假装理解内容，也不把软件读取缺口说成用户没看", "不猜争执或站队"],
+      "reject_phrases": ["我没看", "我还没看", "不敢看", "站队", "槽点", "吵架"]
+    },
+    {
+      "id": "regression-topic-switch", "category": "上下文回归",
+      "messages": [{"role": "other", "text": "发票抬头是什么？", "timestamp": "2026-10-01T10:00:00"}, {"role": "other", "text": "我家猫刚把水杯碰倒了，满桌都是水", "timestamp": "2026-10-12T10:00:00"}],
+      "expected": ["只接猫和水杯当前话题", "不补答旧发票问题", "不责怪隔了很久才回复"],
+      "reject_phrases": ["发票", "抬头", "终于想起", "失踪"]
+    },
+    {
+      "id": "regression-emoji", "category": "上下文回归",
+      "messages": [{"role": "other", "text": "谢谢，我已经找到资料了"}, {"role": "other", "kind": "emoji", "content_known": false, "text": "[表情]"}],
+      "expected": ["依已知文字轻量收尾", "不把未知表情当害羞或喜欢", "不重复求助或强行推进"],
+      "reject_phrases": ["害羞", "喜欢我", "这个表情说明", "你笑得"]
+    },
+    {
+      "id": "regression-ordinary-warmth", "category": "上下文回归", "adult_context": false,
+      "messages": [{"role": "other", "text": "今天你帮我整理的资料太及时了，谢谢"}],
+      "expected": ["普通温暖回应，可以轻松有趣", "不因头像或感谢引入暧昧", "不假定用户还能承担更多任务"],
+      "reject_phrases": ["亲我", "约会", "爱你", "以后都包在我"]
+    },
+    {
+      "id": "regression-work-commitment", "category": "上下文回归", "intent": "现在还不确定能不能完成，想先确认具体范围",
+      "messages": [{"role": "other", "text": "明天中午前帮我把整份报告写完可以吗？"}],
+      "expected": ["先澄清范围或保留时间不确定性", "三个选项都不能替用户承诺完成", "搞笑不能改变立场"],
+      "reject_phrases": ["保证完成", "明天给你", "包在我", "没问题", "一定写完"]
+    }
+  ]
+}

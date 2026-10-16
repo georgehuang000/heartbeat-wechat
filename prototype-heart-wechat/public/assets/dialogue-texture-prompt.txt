@@ -1,0 +1,7 @@
+Use case: stylized-concept
+Asset type: horizontal message-background texture for the dialogue panel in the supplied selected mockup.
+Input image 1 is a style reference. Refer only to the pale pink dotted background inside the lower-left dialogue box. Create a standalone clean background texture, not a UI screenshot.
+Composition: 1200×400 horizontal wide rectangular background, natural softly scattered pale pink circles/dots, subtle pattern with a tileable feel and visually quiet edges.
+Palette: warm milk-white and extremely light pastel pink base, sparse soft low-contrast pink dots. Keep the center pale enough for dark text readability.
+Style: soft romantic galgame UI background, clean flat softly tinted illustration texture, understated and delicate.
+Constraints: full opaque background, no transparency, no border, no frame, no people, no characters, no text, no icons, no logo, no interface, no watermark. No dark tones or vivid pink. Dots should be low contrast and feel softly integrated.

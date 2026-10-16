@@ -1,0 +1,3 @@
+.design-board{padding-bottom:24px}.message-box{background-color:rgba(255,241,248,var(--dialogue-opacity,.88))}
+@media(max-width:1120px){.choice-list{font-size:calc(var(--copy-size,16px)*1.12)!important}.choice{font-size:inherit!important}.message-box p{font-size:calc(var(--message-size,16px)*1.3)!important}}
+@media(max-width:450px){.choice-list{font-size:calc(var(--copy-size,16px)*.94)!important}.message-box p{font-size:calc(var(--message-size,16px)*1.08)!important}}

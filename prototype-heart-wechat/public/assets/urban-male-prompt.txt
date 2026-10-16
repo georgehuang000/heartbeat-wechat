@@ -1,0 +1,10 @@
+Use case: stylized-concept
+Asset type: original urban adult man avatar for a soft anime character library.
+Create one adult urban man approximately 30 years old with neatly styled short dark-brown hair, a warm friendly smile, and a youthful adult face. He wears a white collared shirt with a light-gray casual blazer, open collar without a tie. He has a clean-shaven face and balanced adult shoulders. His face conveys an approachable professional around thirty, slightly more established than a twenty-one-year-old but without middle-aged wrinkles, tired lines or excessive maturity.
+Style: polished delicate Japanese visual-novel anime portrait illustration, fine clean linework, subtle soft cel shading, naturally warm skin tones and restrained hair highlights, consistent with a refined soft character library.
+Composition: centered head-and-shoulders / small upper-chest portrait on a square canvas intended for 400x400 consumption. Entire head and all hair within the canvas with comfortable transparent space above and at both sides. Shoulders near the bottom.
+Background: genuinely transparent alpha, no background scene or checkerboard painting.
+Constraints: exactly one person, ordinary fully clothed modest professional outfit, no props, text, UI, labels, logos, border or watermark.
+
+Generation mode: built-in image_gen, transparent_background=true
+Original output: C:/Users/q9801/.codex/generated_images/01a123d7-62c2-7882-9ae4-f2807ecfe610/exec-b5973eb7-842f-480c-a981-042fdff25d09.png

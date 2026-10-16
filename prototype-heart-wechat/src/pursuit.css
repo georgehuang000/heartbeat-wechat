@@ -1,0 +1,65 @@
+.pursuit-window-bar{display:grid;grid-template-columns:minmax(90px,1fr) auto auto;gap:9px;height:54px;padding:6px 18px;align-items:center}
+.pursuit-window-bar .window-wordmark{width:150px;max-width:100%;height:36px}
+.pursuit-window-bar .window-controls{gap:10px}
+.pursuit-goal-button{background:#fff6fb;border:1px solid #eab6d0;border-radius:14px;padding:4px 10px;font-size:12px;white-space:nowrap;color:#9e376d}
+.pursuit-goal-button:disabled{opacity:.55}
+.pursuit-content{display:grid;grid-template-columns:minmax(0,1fr) 66px;min-height:0;position:relative;align-items:stretch}
+.pursuit-progress{position:relative;align-self:stretch;display:flex;flex-direction:column;align-items:center;min-height:210px;width:48px;padding:10px 3px 7px;border:1px solid #efd3e0;border-radius:24px;background:#fffafd;color:#bc467f;cursor:pointer;margin:20px 9px 0;isolation:isolate;box-shadow:inset 0 0 0 3px #fff,0 2px 7px #c483a010}
+.pursuit-progress:disabled{opacity:.55;cursor:default}.pursuit-progress:focus-visible{outline:2px solid #9e376d;outline-offset:-3px;border-radius:12px}
+.pursuit-meter-title{font-size:10px;letter-spacing:1px;line-height:17px;color:#8c526f;font-weight:600}
+.pursuit-meter-ornament{flex:none;color:#cf96b2;margin:3px 0 9px}
+.pursuit-track{position:relative;display:block;width:28px;flex:1;min-height:90px}
+.pursuit-tube{position:absolute;left:8px;top:0;bottom:0;width:12px;border:1px solid #deb1c8;border-radius:8px;background:#f4e7ee;box-shadow:inset 0 0 0 2px #fff;overflow:hidden}
+.pursuit-fill{position:absolute;left:2px;right:2px;bottom:2px;max-height:calc(100% - 4px);background:#df7ba7;border-radius:5px;box-shadow:inset 2px 0 0 #f4b6d1;transition:height .35s ease}
+.pursuit-ticks{position:absolute;inset:2px 0 calc(20% + 2px);display:flex;flex-direction:column;justify-content:space-between}
+.pursuit-tick{position:relative;height:0;display:flex;justify-content:flex-end;align-items:center;color:#d9bdcc}
+.pursuit-tick>svg{flex:none;transform:translate(2px,0)}
+.pursuit-tick.complete{color:#c56c94}.pursuit-tick.current{color:#a83e70}.pursuit-tick.current>svg{width:9px;height:9px}.pursuit-tick span{display:none}
+.pursuit-heart-medallion{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;margin-top:6px;border:1px solid #dfa9c2;border-radius:50%;background:#fce5ef;box-shadow:inset 0 0 0 2px #fff,0 2px 4px #bb759627}
+.pursuit-heart{width:19px;height:19px;color:#cf5e90}
+.pursuit-progress[data-stage="0"] .pursuit-heart-medallion{background:#f8eef3;border-color:#e3c6d4}
+.pursuit-progress[data-stage="0"] .pursuit-heart{color:#ae8299}
+.pursuit-meter-label{font-size:10px;line-height:16px;white-space:nowrap;color:#854963;min-height:16px;margin-top:4px}
+.pursuit-progress:hover:not(:disabled){border-color:#d79ab8;background:#fff5fa}.pursuit-progress:hover:not(:disabled) .pursuit-heart-medallion{border-color:#c9759e}
+.pursuit-meter-tip{position:absolute;right:calc(100% + 2px);top:38%;z-index:15;display:none;width:175px;padding:10px 13px;border:1px solid #dba1bd;border-radius:9px;background:#fffafd;box-shadow:0 4px 12px #78405e30;text-align:left;pointer-events:none}
+.pursuit-meter-tip b{display:block;color:#a03068;font-size:12px;line-height:1.6}.pursuit-meter-tip small{display:block;color:#956b82;font-size:11px;line-height:1.6}
+.pursuit-progress:hover .pursuit-meter-tip,.pursuit-progress:focus-visible .pursuit-meter-tip{display:block}
+.pursuit-content>.choice-list{padding-right:0}
+.pursuit-settings fieldset{padding:0;margin:16px 0;border:0;min-width:0}.pursuit-settings legend{font-size:15px;font-weight:600;margin-bottom:10px}
+.pursuit-goal-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.pursuit-goal-options label{display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid #edc4d7;border-radius:8px;background:#fff8fc;padding:9px 3px;font-size:13px;white-space:nowrap;cursor:pointer}
+.pursuit-goal-options input{width:15px!important;height:15px!important}
+.pursuit-goal-options .active,.pursuit-stage-options .active{background:#ffe0ee;border-color:#d65c94;color:#8e2457}
+.goal-description{margin:8px 0 14px!important}.pursuit-adult{font-size:13px;line-height:1.6;align-items:flex-start!important}
+.pursuit-stage-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.pursuit-stage-options button{font-size:11px;min-height:37px;padding:6px 2px;background:#fff8fc;border:1px solid #ecc3d5;border-radius:7px;white-space:nowrap}
+.stage-settings-note{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:#956b82;margin-top:9px;line-height:1.5}
+.stage-settings-note button{font-size:11px;white-space:nowrap}
+.choice{overflow:visible}.choice-tooltip{position:absolute;top:calc(100% + 6px);left:4px;right:4px;z-index:12;display:none;background:#fffafd;border:1px solid #dba1bd;border-radius:9px;box-shadow:0 4px 12px #78405e30;padding:9px 12px;color:#684456;font-size:12px;line-height:1.5;font-weight:400;text-align:left;pointer-events:none}
+.choice-tooltip b{color:#a03068;font-size:12px;margin-right:7px;font-weight:600}
+.choice:hover .choice-tooltip,.choice:focus-visible .choice-tooltip,.choice[data-explanation=true] .choice-tooltip{display:block}
+.desktop-runtime .game-window{grid-template-rows:54px minmax(0,1fr) clamp(158px,29vh,182px) 48px auto}
+.desktop-runtime .pursuit-window-bar{height:54px;gap:7px;padding:6px 15px}
+.desktop-runtime .pursuit-window-bar .window-wordmark{width:130px;height:30px}
+.desktop-runtime .pursuit-goal-button{font-size:11px;padding:4px 8px}
+.desktop-runtime .pursuit-content{grid-template-columns:minmax(0,1fr) 58px}
+.desktop-runtime .pursuit-progress{min-height:0;width:44px;padding:8px 3px 7px;margin:20px 7px 6px}
+.desktop-runtime .pursuit-track{min-height:65px}
+.desktop-runtime .pursuit-meter-title{font-size:10px}
+.desktop-runtime .pursuit-meter-label{font-size:10px}
+.desktop-runtime .pursuit-content>.choice-list{padding-right:0}
+.desktop-runtime .choice-tooltip{font-size:11px}
+@media(max-width:450px){.pursuit-goal-options label{font-size:12px}.pursuit-settings .help{font-size:12px}.pursuit-adult{font-size:12px}.pursuit-window-bar{padding-left:13px;padding-right:13px;gap:3px 6px}.pursuit-window-bar .window-wordmark{width:125px}.pursuit-window-bar .window-controls{gap:6px}}
+@media(prefers-reduced-motion:reduce){.pursuit-fill{transition:none}}
+.relationship-assessment{margin:12px 0 18px;padding:12px;border:1px solid #e7bed2;border-radius:10px;background:#fffafd}
+.relationship-assessment h4{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;margin:0 0 8px;color:#81415f}
+.relationship-assessment h4 strong{font-size:12px;color:#a83e73;background:#fce5ef;padding:3px 7px;border-radius:6px}
+.relationship-assessment>p{font-size:13px;line-height:1.6;margin:0 0 6px}
+.assessment-scope,.assessment-boundary{display:block;font-size:11px;line-height:1.6;color:#956b82}
+.assessment-evidence{list-style:none;padding:0;margin:10px 0}
+.assessment-evidence li{margin:7px 0;padding-left:9px;border-left:2px solid #e1acc5}
+.assessment-evidence li>span{display:block;font-size:11px;color:#956b82;margin-bottom:3px}
+.assessment-evidence q{display:block;font-size:13px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap;quotes:none}
+.assessment-action{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 8px}
+.assessment-action .secondary{font-size:12px;padding:7px 11px;border-radius:8px}
+.assessment-action small{font-size:11px;color:#956b82}

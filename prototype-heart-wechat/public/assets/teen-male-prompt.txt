@@ -1,0 +1,17 @@
+Create an original friendly school-age boy avatar, approximately sixteen years old. He has a youthful teen face, neat short dark hair and a gentle smile. His ordinary daily outfit is a loose mint-green sports jacket zipped over a light high crew-neck T-shirt. Show just his head, shoulders and a small portion of upper chest.
+Use a soft detailed Japanese animation illustration style with fine clean lines, gentle cel shading, warm natural skin colors and subtle hair highlights.
+Single centered character on a truly transparent alpha background. Square canvas for a 400x400 avatar. Keep the whole head and hair in frame with clear space above and beside the hair. No background scene, letters, interface, border, logos, props or watermarks.
+
+Generation mode: built-in image_gen, transparent_background=true
+Style examined: D:/1项目/微信聊天对话选项/prototype-heart-wechat/public/assets/child-male.png (no image attached to generation)
+Original output: C:/Users/q9801/.codex/generated_images/01a123d7-62c2-7882-9ae4-f2807ecfe610/exec-ce96f26f-6671-4a3c-bd37-d9409217928b.png
+Process note: first benign avatar request was blocked at input moderation; simplified ordinary clothed teen portrait description succeeded on retry.
+
+Initial prompt (no output):
+Use case: stylized-concept
+Asset type: original teen boy character head-and-shoulders avatar for a friendly everyday chat assistant character library.
+Primary request: Create one original clearly teenage boy approximately 16 years old, with fresh tidy short dark hair, a friendly gentle smile, a youthful adolescent face with teen proportions. He wears a loose mint-green sports jacket zipped up over a simple light crew-neck shirt, fully covered ordinary casual daily clothing.
+Style/medium: refined soft Japanese anime illustration, delicate crisp linework, smooth subtle cel shading, naturally warm skin tones, restrained warm highlights, soft eyes. Coherent with a character library rendered in polished delicate visual-novel anime portrait style.
+Composition/framing: square 400x400 target canvas, one centered single boy, portrait from head through shoulders and upper chest. Entire head and all hair within the canvas, comfortable clear margin above and to the sides. Face fully visible. Shoulders near the lower edge.
+Scene/backdrop: genuinely transparent background with alpha, no scenery and no painted checkerboard.
+Constraints: unmistakably a teenager, approximately 16, youthful adolescent face; nonsexual everyday design and modest fully covered loose outfit. One person only; no text, UI, borders, icons, logos, watermark, props, jewelry or other characters. No cropped head.

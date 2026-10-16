@@ -1,0 +1,61 @@
+{
+  "source": "prototype-heart-wechat\\public\\assets\\app-icon.png",
+  "source_sha256": "e1ba9f78944e64e29a46c3e89ff6b0cb78e14ae850a71af32b206ed991c5f8bc",
+  "desktop_png": "assets\\heart-wechat-desktop-v2.png",
+  "ico": "assets\\heart-wechat.ico",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "significant_alpha_threshold": 8,
+  "artwork_bounds": [
+    126,
+    133,
+    1129,
+    1119
+  ],
+  "crop": [
+    105,
+    104,
+    1150,
+    1149
+  ],
+  "export_size": [
+    1045,
+    1045
+  ],
+  "previous_artwork_width_ratio": 0.7998405103668261,
+  "desktop_artwork_width_ratio": 0.9598086124401913,
+  "visual_scale_change": 1.2,
+  "source_preserved": true,
+  "frame_comparison": [
+    {
+      "canvas_px": 16,
+      "visible_width_px": {
+        "previous": 12,
+        "updated": 16
+      }
+    },
+    {
+      "canvas_px": 32,
+      "visible_width_px": {
+        "previous": 26,
+        "updated": 30
+      }
+    },
+    {
+      "canvas_px": 48,
+      "visible_width_px": {
+        "previous": 38,
+        "updated": 46
+      }
+    },
+    {
+      "canvas_px": 64,
+      "visible_width_px": {
+        "previous": 51,
+        "updated": 62
+      }
+    }
+  ]
+}

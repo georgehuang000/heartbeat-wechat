@@ -1,0 +1,12 @@
+Use case: stylized-concept
+Asset type: transparent PNG avatar for the third CONFIG role in a Chinese galgame-style desktop chat assistant.
+Input images: reference image at D:/1项目/微信聊天对话选项/docs/design/heart-wechat-v3/01-heart-dialogue.png, style/composition reference only. Match the illustrated third female avatar in the right CONFIG panel; do not copy any UI or text.
+Primary request: Create exactly one head-and-shoulders portrait of a clearly adult woman approximately 30 years old, with an intelligent warm older-sister presence, long dark charcoal-black hair, a gentle friendly smile, and a casual light-colored blouse, fully clothed.
+Style/medium: polished commercial Japanese/Chinese galgame character portrait, delicate clean linework, soft cel shading, warm rose-tinted highlights and natural skin tones. Match the reference's elegant anime portrait treatment.
+Composition/framing: 400x400 square canvas; centered single person head and shoulders, face fully visible, ample hair silhouette space, shoulders near the bottom edge.
+Scene/backdrop: genuinely transparent background with alpha, no background scene and no painted checkerboard.
+Constraints: one adult woman only; no UI, letters, text, logos, watermark, border, props, icons or other characters. Fully clothed, casual modest blouse.
+
+Generation mode: built-in image_gen, transparent_background=true
+Reference path: D:/1项目/微信聊天对话选项/docs/design/heart-wechat-v3/01-heart-dialogue.png
+Original output: C:/Users/q9801/.codex/generated_images/01a123d7-62c2-7882-9ae4-f2807ecfe610/exec-8bb2c63d-7890-4339-8337-10fad77476d4.png

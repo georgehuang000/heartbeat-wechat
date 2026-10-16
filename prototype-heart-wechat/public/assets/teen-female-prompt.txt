@@ -1,0 +1,7 @@
+Use case: illustration-story
+Asset type: original teenage girl avatar for a family-friendly chat interface.
+Create one school-age teenage girl around sixteen years old, with youthful teenage facial proportions, brown hair tied in a neat practical ponytail, a natural friendly smile, and relaxed shoulders. She wears a comfortable loose pale lavender athletic jacket, fully covering her shoulders and upper torso, with an ordinary high casual neckline.
+Style: polished gentle Japanese animation character illustration, fine clean outlines, delicate pastel coloring, soft hair and skin shading, warm even lighting; consistent with a soft brown-haired child avatar wearing a pink and white hoodie.
+Composition: square canvas, centered front-facing head-and-shoulders upper-body portrait, entire head and hairstyle inside the frame with comfortable margin. Designed to display at 400×400.
+Background: genuinely transparent alpha background.
+Constraints: one girl only, ordinary age-appropriate everyday appearance, no makeup or jewelry, no text, no UI, no logos, no watermark, no frame, no props, no other people.

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>下一句 · NEXT LINE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand"><span class="brand-symbol" aria-hidden="true">↗</span><div><h1>下一句<span class="brand-dot">.</span></h1><span class="brand-en">NEXT LINE</span></div></div>
+      <div class="header-actions">
+        <button class="icon-button" id="history-open" title="剧情存档" aria-label="打开剧情存档"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h13a1 1 0 0 1 1 1v15l-7-3-7 3V4Z"/><path d="M9 8h6M9 11h5"/></svg></button>
+        <button class="icon-button settings-button" id="settings-open" title="DeepSeek API 设置" aria-label="打开设置"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg><span>设置</span></button>
+      </div>
+    </header>
+
+    <main class="main-scroll">
+      <section class="connection-banner" id="connection-banner" aria-live="polite"><span class="status-dot"></span><span id="connection-copy">正在连接下一句…</span><button class="text-button" id="connect-button">连接微信</button><button class="text-button" id="visual-open">截图读取 ↗</button></section>
+      <section class="demo-banner" id="demo-banner" hidden><span>体验模式 · 虚构聊天</span><button class="text-button" id="demo-exit">切回微信 ↗</button></section>
+
+      <section class="conversation" aria-labelledby="conversation-heading">
+        <div class="section-eyebrow"><span>STORY IN PROGRESS</span><span class="page-mark">01 / 对话中</span></div>
+        <div class="contact-line"><div class="avatar" id="contact-avatar" aria-hidden="true">…</div><div><h2 id="conversation-heading">等一句开场白</h2><p id="contact-detail">打开微信，选中你想聊天的人</p></div><span class="live-pill" id="live-pill"><span></span>等待连接</span></div>
+        <div class="message-bubble"><span class="message-quote" aria-hidden="true">“</span><p id="latest-message">聊天最难的，有时候就是下一句。<br>让我们一起接下去。</p><span id="message-time"></span></div>
+      </section>
+
+      <section class="choices-section" aria-labelledby="choices-heading">
+        <div class="choice-title-row"><div><div class="section-eyebrow choice-eyebrow">YOUR NEXT LINE</div><h2 id="choices-heading">故事，往哪走？<span class="tiny-spark" aria-hidden="true">✳</span></h2></div><button class="reroll-button" id="generate-button" title="重新生成三个选项"><span class="reroll-icon" aria-hidden="true">↻</span><span>换一组</span></button></div>
+        <div id="generation-note" class="generation-note" aria-live="polite" hidden><span id="generation-message"></span><button class="text-button" id="generation-settings" hidden>去设置 ↗</button></div>
+        <div id="choices" class="choices" aria-live="polite"><div class="empty-state"><div class="empty-art" aria-hidden="true">↗</div><h3>下一句，还没开始</h3><p>连接微信后，新的消息会在这里<br>变成几个可以选择的方向。</p><button class="button secondary" id="empty-demo">先玩一下演示</button></div></div>
+        <div class="intent-box"><label for="intent" class="visually-hidden">这一轮想怎么聊</label><span aria-hidden="true">＋</span><input id="intent" maxlength="200" placeholder="有自己的想法？比如：想约周末见面" autocomplete="off"><button class="intent-submit" id="intent-submit" aria-label="按我的想法生成" title="按我的想法生成">↗</button></div>
+      </section>
+
+      <section id="draft-section" class="draft-section" hidden aria-labelledby="draft-heading"><div class="draft-heading"><h2 id="draft-heading">就这句，再加一点你</h2><button class="text-button" id="draft-close" aria-label="收起草稿">收起 ×</button></div><label class="visually-hidden" for="draft">待填入微信的回复</label><textarea id="draft" rows="3" placeholder="也可以写一句你自己的…"></textarea><div class="draft-footer"><span id="draft-note">填入后，由你按下发送</span><div class="draft-actions"><button class="button secondary" id="copy-button">复制</button><button class="button primary" id="fill-button">填入微信 <span aria-hidden="true">↗</span></button></div></div></section>
+
+      <div class="bottom-note"><svg viewBox="0 0 36 30" aria-hidden="true"><path d="m4 13 26-9-8 22-7-8-11-5Z"/><path d="m15 18 15-14M15 18l-1 7 5-3"/></svg><p>不必每句都完美，<br>聊下去就会有新的剧情。</p></div>
+    </main>
+
+    <footer class="status-footer"><button id="pause-button" class="pause-button" aria-pressed="false"><span id="pause-icon" aria-hidden="true">Ⅱ</span><span id="pause-copy">暂停捕捉</span></button><button class="memory-link" id="memory-open"><span class="memory-dot" aria-hidden="true"></span><span id="memory-count">剧情存档 · 0 条</span><span aria-hidden="true">↗</span></button></footer>
+  </div>
+
+  <dialog id="history-dialog" class="panel-dialog history-dialog" aria-labelledby="history-title">
+    <div class="dialog-heading"><div><span class="section-eyebrow">STORY SAVE</span><h2 id="history-title">你们的剧情存档</h2></div><button class="icon-button close-dialog" aria-label="关闭剧情存档">×</button></div>
+    <p class="dialog-intro">记住旧话题、小习惯和共同的梗，下一句才能接得自然。</p>
+    <div class="history-summary"><strong id="history-total">0 条消息</strong><span id="history-coverage">还没有读取历史</span></div>
+    <button class="button secondary wide" id="load-history">从微信读取更多历史 <span aria-hidden="true">↗</span></button>
+    <p class="field-hint">会读取当前会话可访问的记录；显示的范围不代表全部历史。</p>
+    <div id="memory-list" class="memory-list"></div>
+    <details class="import-details"><summary>粘贴聊天记录 / 手动补充</summary><div class="import-content"><label for="history-contact">这段记录属于谁</label><input id="history-contact" placeholder="填写联系人名称" maxlength="100"><label for="history-text">聊天记录</label><textarea id="history-text" rows="6" placeholder="我：上次说的那家火锅店怎么样？&#10;对方：还没去呢，最近有点忙"></textarea><p class="field-hint">建议按“我：…”和“对方：…”分行，区分双方的发言。</p><button class="button primary wide" id="import-history">保存这段剧情</button></div></details>
+  </dialog>
+
+  <dialog id="settings-dialog" class="panel-dialog" aria-labelledby="settings-title">
+    <div class="dialog-heading"><div><span class="section-eyebrow">BACKSTAGE</span><h2 id="settings-title">幕后设置</h2></div><button class="icon-button close-dialog" aria-label="关闭设置">×</button></div>
+    <p class="dialog-intro">接上 DeepSeek，让它帮你想几个不同的聊天方向。API Key 直接填在这里即可。</p>
+    <form id="settings-form">
+      <label for="api-key">DeepSeek API Key <span id="key-status" class="optional">尚未配置</span></label><input id="api-key" type="password" placeholder="在这里粘贴你的 DeepSeek API Key" autocomplete="new-password"><p class="field-hint">首次使用需要填写；已有密钥时留空会保留。保存后不显示密钥。</p>
+      <label for="base-url">DeepSeek 接口地址</label><input id="base-url" type="url" placeholder="https://api.deepseek.com" required><p class="field-hint">生成时，当前对话和相关历史会发送给这里配置的 DeepSeek 服务。连接测试只使用虚构示例。</p>
+      <label for="model-name">模型名称</label><input id="model-name" placeholder="deepseek-flash" autocomplete="off" required>
+      <label class="toggle-row" for="auto-generate"><span><strong>自动接下一句</strong><small>收到新消息，自动生成选项</small></span><input id="auto-generate" type="checkbox"><span class="toggle-track" aria-hidden="true"></span></label>
+      <label class="toggle-row" for="follow-window"><span><strong>跟随微信窗口</strong><small>让选项框待在微信旁边</small></span><input id="follow-window" type="checkbox"><span class="toggle-track" aria-hidden="true"></span></label>
+      <div class="settings-actions"><button type="button" class="button secondary" id="test-model">测试连接</button><button type="submit" class="button primary">保存设置</button></div>
+      <p id="model-test-result" class="field-hint" role="status"></p>
+    </form>
+    <div class="visual-settings"><strong>截图读取</strong><p class="field-hint">普通连接读不到时，可以框出微信聊天区域来读取。切换联系人后，核对一次名字即可。</p><div class="visual-toolbar"><button class="button secondary" id="visual-settings-open">读取当前聊天</button><button class="text-button" id="visual-recalibrate">重新框选 ↗</button></div></div>
+    <div class="settings-demo"><span>想先看看聊天场景？</span><button class="text-button" id="settings-demo">打开演示场景 ↗</button></div>
+  </dialog>
+
+  <dialog id="visual-dialog" class="panel-dialog visual-dialog" aria-labelledby="visual-title">
+    <div class="dialog-heading"><div><span class="section-eyebrow">READ THE SCENE</span><h2 id="visual-title">让下一句看懂微信</h2></div><button class="icon-button close-dialog" aria-label="关闭截图读取">×</button></div>
+    <p id="visual-intro" class="dialog-intro">先框好聊天位置，再核对我们读到的名字。</p>
+    <p id="visual-status" class="visual-status" role="status" hidden></p>
+    <section id="visual-setup" hidden aria-label="框选微信聊天位置">
+      <label for="visual-account">这是哪个微信账号</label><input id="visual-account" maxlength="80" placeholder="取个常用名称，如：我的微信"><p class="field-hint">用于区分不同账号的存档，填你自己认得的名字就好。</p>
+      <div class="visual-steps" aria-label="依次框选三个位置"><button type="button" data-visual-step="0">1 聊天区</button><button type="button" data-visual-step="1">2 聊天标题</button><button type="button" data-visual-step="2">3 输入框</button></div>
+      <p id="visual-step-instruction" class="visual-instruction">在图上拖出一个框，选中完整的右侧聊天区，包含标题和输入框。</p>
+      <div class="visual-image-scroll"><div id="visual-stage" class="visual-stage"><img id="visual-image" alt="当前微信窗口的本机截图，在此框选聊天位置" draggable="false"><div id="visual-boxes" class="visual-boxes" aria-hidden="true"></div></div></div>
+      <div class="visual-toolbar"><button class="text-button" id="visual-zoom">放大查看 ＋</button><button class="text-button" id="visual-redraw">全部重画</button><button class="text-button" id="visual-recapture">重新截图 ↻</button></div>
+      <p class="field-hint">整张窗口截图只在本机预览。点击下面的按钮后，才会将框选的聊天区交给识别服务。</p>
+      <button class="button primary wide" id="visual-save" disabled>保存并识别 ↗</button>
+    </section>
+    <section id="visual-preview" hidden aria-label="核对识别的聊天内容">
+      <label for="visual-contact">确认一下，你在和谁聊天</label><input id="visual-contact" maxlength="100" placeholder="核对联系人名字，认错的字可以直接改"><p class="field-hint">名字会关联这位联系人的剧情存档。相似的字请核对一下。</p>
+      <div id="visual-warnings" class="visual-warnings" hidden></div>
+      <div id="visual-preview-messages" class="visual-preview-messages"></div>
+      <p id="visual-input-preview" class="field-hint" hidden></p>
+      <p class="field-hint">同一位联系人的新消息会继续读取。换聊天对象时，再重新确认一次。</p>
+      <button class="button primary wide" id="visual-bind">确认并连接 ↗</button>
+      <div class="visual-toolbar"><button class="text-button" id="visual-preview-refresh">重新识别 ↻</button><button class="text-button" id="visual-preview-redraw">位置不对？重新框选</button></div>
+    </section>
+    <div id="visual-recovery" class="visual-toolbar" hidden><button class="button secondary" id="visual-retry">再试一次</button><button class="text-button" id="visual-recovery-redraw">重新框选</button></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+Use case: background-extraction
+Asset type: transparent character portrait PNG for a commercial galgame chat UI.
+Input image: D:/1项目/微信聊天对话选项/docs/design/heart-wechat-v3/01-heart-dialogue.png is the reference image. Use ONLY the fourth character in the CONFIG character selector, labeled 元气搭子, as the visual reference.
+Primary request: faithfully regenerate one clearly adult 25-year-old man, with slightly messy short black hair, bright cheerful open-mouth smile, expressive dark eyes and a black hoodie with restrained orange trim, fully clothed. Preserve the recognizable face and refined commercial Japanese galgame/anime illustration style of the reference, delicate linework, warm skin tones, and soft shading.
+Scene/backdrop: genuinely transparent alpha background.
+Composition/framing: one man only in a square 400x400 canvas; complete head and hair, shoulders and upper chest reaching the bottom edge; subject slightly below vertical center with transparent margin above the head. Entire head visible.
+Constraints: no text, no letters, no UI, no borders, no speech bubbles, no logo, no watermark, no additional people, no background, no opaque white background. Make him visibly an adult, not a child.

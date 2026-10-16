@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: original standalone character portrait PNG for a commercial galgame chat UI.
+Input image: D:/1项目/微信聊天对话选项/prototype-heart-wechat/public/assets/uncle.png is a STYLE reference only. Match its fine clean Japanese galgame/anime linework, soft shading, gentle warm skin palette and polished character illustration finish. Create a new character with a different identity.
+Primary request: one visibly elderly grandfather, approximately 70 years old, with short white-gray hair, a slightly receding hairline, warm friendly eyes and a gentle welcoming smile. His face MUST truly look aged: visible forehead creases, crow's feet at the eyes, softly sagging cheeks, nasolabial folds, subtle jowls and mature facial proportions. Treat age respectfully and naturally. He must NOT have a youthful face merely colored with white hair. Fully clothed, wearing a soft muted warm-gray knitted cardigan over a modest light collared shirt. Head-and-shoulders portrait with upper chest.
+Scene/backdrop: genuinely transparent alpha background, absolutely no opaque backdrop.
+Composition/framing: square canvas intended for 400x400 display. One grandfather only, frontal or slight three-quarter pose, shoulders and upper chest ending at lower edge, complete head and all hair visible, clear transparent margin above head. Subject slightly below vertical center, balanced shoulder silhouette.
+Lighting/mood: gentle warm diffuse light, calm friendly welcoming mood.
+Constraints: no text, no lettering, no UI, no borders, no logos, no watermark, no background scenery, no other people. Elderly face must be unmistakably about 70, with visible yet gentle wrinkles. Complete head, no head cropping.

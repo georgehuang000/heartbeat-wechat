@@ -1,0 +1,7 @@
+Use case: illustration-story
+Asset type: original child avatar for a family-friendly chat interface.
+Create one cheerful school-age girl around eleven years old, visibly a child, with a round youthful face, short neat brown hair, natural friendly smile, and small childlike shoulders. She wears a comfortable loose soft pink and white everyday hoodie with a high neckline.
+Style: polished gentle Japanese cartoon illustration, fine clean outlines, delicate pastel coloring, soft hair and skin shading, warm even lighting.
+Composition: square canvas, centered front-facing head-and-shoulders portrait, entire head and hair inside the frame with comfortable margin. Designed to display at 400×400.
+Background: genuinely transparent alpha background.
+Constraints: one girl only, ordinary age-appropriate everyday appearance, no makeup or jewelry, no text, no UI, no logos, no watermark, no frame, no props, no other people.

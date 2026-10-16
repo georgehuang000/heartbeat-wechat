@@ -1,0 +1,17 @@
+INITIAL GENERATION PROMPT
+
+Use case: stylized-concept
+Asset type: original older female character avatar for a friendly dialogue interface.
+Create one clearly older woman around sixty years old. Short neat gray-brown hair with visible silver strands, mature facial structure, gentle but clearly visible crow's feet, subtle forehead lines and nasolabial smile lines. A warm friendly smile. She should visibly look sixty, older than a forty-year-old woman, while still looking lively and not extremely elderly.
+Clothing: modest soft pale lavender high-neck knitted sweater, comfortably covering shoulders and upper torso.
+Style: polished gentle Japanese visual novel / galgame character illustration, fine clean outlines, delicate pastel coloring, soft hair and skin shading, warm even lighting, consistent with softly illustrated chat character avatars.
+Composition: square canvas, centered front-facing head-and-shoulders upper-body portrait, entire head and hair comfortably inside the frame with margin. Suitable for 400×400 display.
+Background: genuinely transparent alpha background.
+Constraints: one older adult woman only, age sixty with clear natural age detail, no text, no UI, no logos, no watermark, no frame, no props, no other people, no exaggerated caricature, no glamorous makeup.
+
+FRAMING EDIT PROMPT
+
+Use case: identity-preserve
+Asset type: transparent older female avatar, square composition for 400×400 display.
+Edit the supplied portrait only to improve framing: make the character slightly smaller so the complete head and every hair strand fits inside the square with a clear transparent margin above the hair and on both sides. Keep her original face, gentle smile, sixty-year-old age details, gray-brown short hair, pale lavender high-neck knitted sweater, colors, illustration style and head-and-shoulders pose unchanged.
+Constraints: genuinely transparent background, no frame, no text, no UI, no watermark, one woman only. Leave about 8% of canvas height as transparent empty margin above the full hair silhouette.
