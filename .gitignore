@@ -14,6 +14,8 @@ artifacts/private/
 # nested website checkout and binary releases stay on this machine.
 /*
 !/.gitignore
+!/.github/
+!/.gitleaks.toml
 !/README.md
 !/main.py
 !/pyproject.toml
@@ -35,6 +37,7 @@ artifacts/private/
 !/assets/desktop-icon-export.json
 /docs/*
 !/docs/public/
+!/docs/promotion/
 /docs/public/project-readme.md
 /prototype-heart-wechat/*
 !/prototype-heart-wechat/src/

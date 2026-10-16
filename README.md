@@ -4,6 +4,16 @@
 
 粉色对话框、对方角色、聊天风格与表情设置；既可以认真接话，也可以轻松玩梗。
 
+[官网与下载](https://82.157.178.52/heartbeat-wechat/) · [赞助作者](docs/public/SPONSOR.md) · [宣传素材](docs/promotion/README.md)
+
+![心动微信宣传视觉稿](docs/promotion/hero-desktop.png)
+
+<details><summary>移动宣传图与真实界面（虚构对话）</summary>
+
+<img src="docs/promotion/hero-mobile.png" width="320" alt="移动宣传视觉稿"> <img src="docs/promotion/product-fictional.jpg" width="320" alt="真实应用界面，虚构联系人与对话">
+
+</details>
+
 ## 当前功能
 
 - 根据当前微信聊天读取双方历史，显示联系人备注或群名称。
@@ -49,7 +59,7 @@ npm --prefix prototype-heart-wechat run build
 
 觉得有趣，欢迎 Star、提交 Issue，或在「设置 → 赞助」请作者喝杯奶茶。赞助自愿，不影响功能。
 
-- [GitHub 项目](https://github.com/georgehuang000/heart-wechat)
-- 官网尚未上线，本机预览约定使用 `http://127.0.0.1:10001/`，不作为公网地址。
+- [GitHub 项目](https://github.com/georgehuang000/heartbeat-wechat)
+- [官网](https://82.157.178.52/heartbeat-wechat/) · [支付宝赞助页](https://82.157.178.52/heartbeat-wechat/sponsor/)
 
 第三方组件与素材遵循各自许可，许可文本保留于对应目录及 `packaging/THIRD-PARTY-NOTICES.txt`；项目尚未指定整体开源许可证。

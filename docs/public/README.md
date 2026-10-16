@@ -16,9 +16,11 @@
 
 设置右上角「赞助」进入作者页，支付宝图片原文件显示，支持放大；GitHub 与官网在外部浏览器打开。入口不触发读取聊天、模型请求或支付。
 
-地址集中在 `prototype-heart-wechat/src/authorLinks.js`。官网未上线，当前标记「官网预览 · 本机」，端口约定为 **10001**。本机有单独维护的 `promotion-heart-wechat` 网站目录时，可运行 `scripts/preview_website.ps1`。它只监听本机地址；这不是公网部署，也不会永久占用 Windows 端口。正式域名确定后替换配置并重新构建。
+地址集中在 `prototype-heart-wechat/src/authorLinks.js`。官网使用 `https://82.157.178.52/heartbeat-wechat/`，赞助页位于其 `sponsor/`。服务器 10001 已有其他业务，因此使用现有 HTTPS 服务的独立路径，保留原业务。本机开发预览仍可使用 `scripts/preview_website.ps1`。
 
 网站有独立的本地 Git 仓库，不作为这个应用仓库的嵌套仓库上传。
+
+[Mac / iOS 移植可行性](APPLE-PLATFORMS.md) · [本次公开上传检查](PRIVACY-CHECK.md) · [赞助作者](SPONSOR.md)
 
 ## 第三方资料
 
