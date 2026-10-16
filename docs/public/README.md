@@ -16,7 +16,7 @@
 
 设置右上角「赞助」进入作者页，支付宝图片原文件显示，支持放大；GitHub 与官网在外部浏览器打开。入口不触发读取聊天、模型请求或支付。
 
-地址集中在 `prototype-heart-wechat/src/authorLinks.js`。官网使用 `https://82.157.178.52/heartbeat-wechat/`，赞助页位于其 `sponsor/`。服务器 10001 已有其他业务，因此使用现有 HTTPS 服务的独立路径，保留原业务。本机开发预览仍可使用 `scripts/preview_website.ps1`。
+地址集中在 `prototype-heart-wechat/src/authorLinks.js`。官网使用 `https://82.157.178.52/heartbeat-wechat/`，本机开发预览可使用 `scripts/preview_website.ps1`。GitHub README 直接显示支付宝原始收款码，Sponsor 按钮指向仓库内的赞助说明，不跳转个人网站。
 
 网站有独立的本地 Git 仓库，不作为这个应用仓库的嵌套仓库上传。
 
