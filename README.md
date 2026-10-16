@@ -1,18 +1,23 @@
 # 心动微信 ♥
 
-微信旁边的 galgame 风格聊天提词器：看懂双方聊天，给出几句可选台词。点击选项填入微信草稿，发送由你决定。
+一个在微信旁边给你回复灵感的 Windows 小工具，界面像 galgame 的对话选项。
 
-粉色对话框、对方角色、聊天风格与表情设置；既可以认真接话，也可以轻松玩梗。
+不知道怎么接话、想把关心说得自然一点，或者只是想找句好玩的回复？打开当前聊天，它会参考你们双方的消息，给出几句可选台词。**点击一句，填入微信草稿；修改和发送由你决定。**
 
-[官网与下载](https://82.157.178.52/heartbeat-wechat/) · [赞助作者](docs/public/SPONSOR.md) · [宣传素材](docs/promotion/README.md)
+[官网与下载](https://82.157.178.52/heartbeat-wechat/) · [使用说明与当前限制](docs/public/README.md) · [赞助作者](docs/public/SPONSOR.md)
 
-![心动微信宣传视觉稿](docs/promotion/hero-desktop.png)
+![心动微信的使用过程：打开聊天、参考上下文、给出建议、选中填入草稿](docs/promotion/how-it-works.png)
 
-<details><summary>移动宣传图与真实界面（虚构对话）</summary>
+## 怎么用
 
-<img src="docs/promotion/hero-mobile.png" width="320" alt="移动宣传视觉稿"> <img src="docs/promotion/product-fictional.jpg" width="320" alt="真实应用界面，虚构联系人与对话">
+1. **安装并连接模型**：在设置里填入你自己的模型 API 地址、模型名和密钥。
+2. **打开一个微信聊天**：辅助面板跟随微信，参考双方上下文，支持单聊和群聊。
+3. **选一句适合当下的回复**：可以认真关心、轻松接话，也可以按设置玩梗；角色外观和回复风格分别选择。
+4. **在微信里修改、发送**：选择建议只填入草稿，不会自动发送。也可以不回复，让一轮聊天自然结束。
 
-</details>
+例如，对方说「今天忙完了，想找个地方吃饭」，可以从「先找家你喜欢的吧」「辛苦啦，今晚吃点好的」「我也正好想吃饭，一起看看？」中选一句，再改成自己的话。图中联系人和对话均为虚构示例。
+
+粉色对话框和人物立绘提供 galgame 的氛围；这是桌面聊天辅助工具，当前可下载版本适用于 Windows。
 
 ## 当前功能
 
@@ -62,4 +67,4 @@ npm --prefix prototype-heart-wechat run build
 - [GitHub 项目](https://github.com/georgehuang000/heartbeat-wechat)
 - [官网](https://82.157.178.52/heartbeat-wechat/) · [支付宝赞助页](https://82.157.178.52/heartbeat-wechat/sponsor/)
 
-第三方组件与素材遵循各自许可，许可文本保留于对应目录及 `packaging/THIRD-PARTY-NOTICES.txt`；项目尚未指定整体开源许可证。
+第三方组件与图像遵循各自许可，许可文本保留于对应目录及 `packaging/THIRD-PARTY-NOTICES.txt`；项目尚未指定整体开源许可证。
