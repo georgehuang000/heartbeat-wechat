@@ -105,6 +105,58 @@ class WindowGroup:
             self._minimized_target_was_active = True
             self.backend.gui.ShowWindow(self._hwnd(), 6)
             self.visible = False
+            self._pause_work()
+
+    def _pause_work(self):
+        signal = getattr(self.controller, '_background_event', None)
+        if signal is not None and getattr(self.controller, '_activity_active', None) is not False:
+            signal.set()
+
+    def work_state(self, foreground_hwnd=None):
+        """Both real windows must be exposed; never raise them to pass this check.
+
+        Only window geometry/styles are inspected, never another app's content.
+        Foreground membership stays separate so settings and explicit reopen can
+        remain available while the source window is missing or minimized.
+        """
+        inactive = lambda reason: {'active': False, 'reason': reason}
+        try:
+            gui = self.backend.gui
+            panel, target = self._hwnd(), self.target
+            if not panel or not gui.IsWindow(panel) or gui.IsIconic(panel) or not gui.IsWindowVisible(panel):
+                return inactive('panel_hidden')
+            if not self.is_active(foreground_hwnd):
+                return inactive('background')
+            if not target or not gui.IsWindow(target) or gui.IsIconic(target) or not gui.IsWindowVisible(target):
+                return inactive('wechat_hidden')
+            if self.backend._cloaked(panel) or self.backend._cloaked(target):
+                return inactive('window_hidden')
+            areas = {hwnd: gui.GetWindowRect(hwnd) for hwnd in (panel, target)}
+            if any(r[2] <= r[0] or r[3] <= r[1] for r in areas.values()):
+                return inactive('window_hidden')
+            pending, blocked = set(areas), False
+            from .visual_wechat import _overlap
+            def inspect(hwnd, _):
+                nonlocal blocked
+                if hwnd in pending:
+                    pending.remove(hwnd)
+                    return
+                if blocked or not pending or not gui.IsWindowVisible(hwnd) or gui.IsIconic(hwnd) or self.backend._cloaked(hwnd):
+                    return
+                # The pair's own menus/dialogs belong to the same workspace.
+                if gui.GetAncestor(hwnd, 3) in areas:
+                    return
+                if not any(_overlap(gui.GetWindowRect(hwnd), areas[h]) for h in pending):
+                    return
+                details = self.backend._layered_visibility(hwnd)
+                if not details['fully_transparent'] and not details['verified_cursor_overlay']:
+                    blocked = True
+            gui.EnumWindows(inspect, None)
+            if blocked or pending:
+                return inactive('window_obscured')
+            return {'active': True, 'reason': None}
+        except Exception:
+            return inactive('visibility_unknown')
 
     def _record(self, value):
         if value != self.diagnostic:
@@ -209,14 +261,8 @@ class WindowGroup:
             raise ActivityPaused('已暂停后台识别，请回到微信或心动微信。')
         with self.lock:
             self.suspended += 1
-            hwnd = self._hwnd()
-            overlap = True
-            if hwnd and self.target:
-                from .visual_wechat import _overlap
-                overlap = _overlap(self.backend.gui.GetWindowRect(hwnd),self.backend.gui.GetWindowRect(self.target))
-            if hwnd and self.visible and overlap:
-                self._hide_content()
-                self.visible = False
+            # Do not hide the panel to bypass the both-windows-visible policy.
+            # A true visual capture still has its own independent area check.
         try:
             yield
         finally:
@@ -228,6 +274,18 @@ class WindowGroup:
         panel = self._hwnd()
         if not panel:
             return
+        if gui.IsIconic(panel) or self.visible and not gui.IsWindowVisible(panel):
+            self.manual_minimized = True
+            self.user_opened = False
+            self.visible = False
+            self._pause_work()
+        if self.manual_minimized:
+            if gui.IsIconic(panel) or not gui.IsWindowVisible(panel):
+                self._record({'status': 'minimized', 'active': False})
+                return
+            # Only an actual taskbar/launcher restore clears explicit dismissal.
+            self.manual_minimized = False
+            self.visible = True
         if not self.is_active():
             # Standby observes foreground handles only. Do not discover/move,
             # hide/show, change z-order, or restore either background window.
@@ -260,16 +318,6 @@ class WindowGroup:
             self.target = target['hwnd']
             fg = gui.GetAncestor(gui.GetForegroundWindow(), 2)
             active = fg in {panel, self.target}
-            if self.manual_minimized:
-                # A real minimization persists until the user brings WeChat back
-                # from another application, or restores this app from the taskbar.
-                if gui.IsIconic(panel) and (fg != self.target or self._minimized_target_was_active):
-                    self._minimized_target_was_active = fg == self.target
-                    self._record({'status':'minimized'})
-                    return
-                self.manual_minimized = False
-                if gui.IsIconic(panel):
-                    gui.ShowWindow(panel,9)
             monitor = api.MonitorFromRect(tuple(target['rect']), con.MONITOR_DEFAULTTONEAREST)
             work = api.GetMonitorInfo(monitor)['Work']
             pr = gui.GetWindowRect(panel)
@@ -304,16 +352,12 @@ class WindowGroup:
         entering = active and (not self.visible or not was_active or fg != self._last_foreground)
         moved = (pr[0],pr[1]) != (x,y)
         if entering:
-            if fg == self.target:
-                gui.SetWindowPos(self.target,0,0,0,0,0,0x0001|0x0002|0x0010)
-            gui.SetWindowPos(panel,0,x,y,0,0,0x0001|0x0010|0x0040)
+            gui.SetWindowPos(panel,0,x,y,0,0,0x0001|0x0004|0x0010|0x0040)
         elif moved:
             gui.SetWindowPos(panel,0,x,y,0,0,0x0001|0x0004|0x0010)
         if restoring:
             self._restore_content()
-            # Managed visibility restoration can update native z-order. Apply
-            # the group's ordinary stacking order after that transition too.
-            gui.SetWindowPos(panel,0 if active else self.target,x,y,0,0,0x0001|0x0010|0x0040)
+            gui.SetWindowPos(panel,0,x,y,0,0,0x0001|0x0004|0x0010|0x0040)
         self._last_foreground = fg
         self.visible = True
         self._record({'status':'attached','target_rect':target['rect'],
@@ -327,19 +371,18 @@ class WindowGroup:
                                            wintypes.LONG, wintypes.LONG, wintypes.DWORD, wintypes.DWORD)
         dirty = threading.Event()
         def changed(hook,event,hwnd,object_id,child_id,thread_id,event_time):
-            if event == 3 and not self.is_active(hwnd):
-                signal = getattr(self.controller, '_background_event', None)
-                if signal is not None:
-                    signal.set()  # No controller/window lock inversion on hooks.
-            if event != 0x800b or hwnd == self.target:
-                dirty.set()  # Ignore our own movement notifications.
+            if event != 3 and object_id != 0:
+                return  # Ignore caret/content animation, observe window objects.
+            if not self.work_state(hwnd if event == 3 else None)['active']:
+                self._pause_work()  # Remember even a brief cover/leave/restore.
+            dirty.set()
         callback = callback_type(changed)
         user.SetWinEventHook.restype = wintypes.HANDLE
         user.SetWinEventHook.argtypes = [wintypes.DWORD, wintypes.DWORD, wintypes.HMODULE, callback_type,
                                          wintypes.DWORD, wintypes.DWORD, wintypes.DWORD]
         user.UnhookWinEvent.argtypes = [wintypes.HANDLE]
         user.UnhookWinEvent.restype = wintypes.BOOL
-        for low, high in ((3, 3), (0x16, 0x17), (0x800b, 0x800b)):
+        for low, high in ((3, 3), (0x16, 0x17), (0x8002, 0x8004), (0x800b, 0x800b)):
             hook = user.SetWinEventHook(low, high, None, callback, 0, 0, 0)
             if hook:
                 self._hooks.append(hook)

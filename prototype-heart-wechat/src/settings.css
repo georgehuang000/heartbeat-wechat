@@ -160,7 +160,7 @@
 .contact-assist-prompt h3 { margin:10px 0 7px; font-size:18px; line-height:1.5; font-weight:600; }
 .contact-assist-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .contact-assist-prompt p { margin:0 0 15px; font-size:12px; line-height:1.5; color:#a17890; }
-.contact-assist-actions { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:9px; }
+.contact-assist-actions { display:grid; grid-template-columns:minmax(0,1fr); gap:9px; }
 .contact-assist-actions button { font-size:14px; min-height:40px; padding:8px 14px; border-radius:11px; }
 .contact-assist-later { margin-top:12px; font-size:12px; color:#a68598; }
 .contact-assist-deferred { font-size:14px; line-height:1.6; }

@@ -64,6 +64,8 @@ class Controller:
         self._background_event = threading.Event()
         self._needs_fresh_snapshot = start_worker
         self._resume_ready = None
+        self._interrupted_signature = None
+        self._running_signature = None
         self._operation_activity = threading.local()
         self.lock = threading.RLock()
         self.stop = threading.Event()
@@ -110,8 +112,10 @@ class Controller:
     def _sync_activity(self):
         # Test fixtures have no native windows. A production reader fails closed
         # until the desktop window group can positively identify the foreground.
-        active = (bool(self.window_group.is_active()) if self.window_group is not None
-                  else not self._desktop_runtime)
+        work_state = getattr(self.window_group, 'work_state', None)
+        visibility = work_state() if callable(work_state) else None
+        active = (visibility['active'] if visibility is not None else
+            bool(self.window_group.is_active()) if self.window_group is not None else not self._desktop_runtime)
         with self.lock:
             lost = self._background_event.is_set()
             self._background_event.clear()
@@ -122,6 +126,8 @@ class Controller:
                         self.state['generation'].get('status') == 'ready'
                         and self.pending_at is None and not self.generating) else None
                 self._activity_epoch += 1
+                if self.generating and self._running_signature is not None:
+                    self._interrupted_signature = self._running_signature
                 self._needs_fresh_snapshot = True
                 self.pending_at = None
                 self._invalidate_reply_batches(preserve_resume=True)
@@ -131,6 +137,8 @@ class Controller:
                 self.state['attachment_status'] = None
             self._activity_active = active
             self.state['activity'] = {'active': active, 'needs_refresh': self._needs_fresh_snapshot}
+            if visibility is not None:
+                self.state['activity']['reason'] = visibility['reason']
             return active
 
     def _require_active(self, epoch=None, *, fresh=True):
@@ -160,8 +168,13 @@ class Controller:
         if not self._assist_allowed() or contact_id is not None and (not contact or contact['id'] != contact_id):
             raise ActivityPaused('此聊天尚未开启辅助，请先为当前联系人开启。')
 
-    def _apply_disabled_contact(self, contact):
-        signature = ('assistance_disabled', contact['id'], contact.get('name'), contact.get('gender'))
+    def _apply_disabled_contact(self, contact, snapshot=None):
+        rows = deepcopy((snapshot or {}).get('messages', self.state['messages']
+            if (self.state['contact'] or {}).get('id') == contact['id'] else []))
+        for row in rows:
+            row.pop('visual_input', None)
+        signature = ('assistance_disabled', contact['id'], contact.get('name'), contact.get('gender'),
+            CurrentChatAdapter._message_version(rows))
         if self.last_signature != signature:
             self.revision += 1
             self._invalidate_reply_batches()
@@ -171,22 +184,27 @@ class Controller:
         self._image_job = self._media_batch = None
         self._visual_inputs.clear()
         self.state.update(contact=contact, contact_preferences=self.contact_preferences.get(contact['id'], contact),
-            chat_display_name=contact['name'], messages=[], choices=[], memories=[], relationship_assessment=None,
+            chat_display_name=contact['name'], messages=rows, choices=[], memories=[], relationship_assessment=None,
             attachment_status=None, generation_blocked_reason=None, draft='', last_fill_result=None,
             generation={'status': 'contact_disabled', 'error': None},
-            history={'count': 0, 'coverage': '此聊天尚未开启辅助，未读取聊天记录。'})
+            history={'count': len(rows), 'coverage': '已在本地识别；开启此聊天后才向模型提交内容。'})
         self.choice_revision = self.selected_revision = -1
         self.intent = ''
 
-    def _poll_current(self):
+    def _poll_current(self, *, force=False):
         self._require_active(fresh=False)
         epoch = self._activity_epoch
         self._operation_activity.epoch = epoch
         self._operation_activity.contact_id = None
-        with self.window_group.capture_guard() if self.window_group else nullcontext():
-            snapshot = self.adapter.snapshot()
+        poll = getattr(self.adapter, 'poll', None)
+        snapshot = poll(force=force or self._needs_fresh_snapshot or self.last_signature is None) if callable(poll) else self.adapter.snapshot()
         self._require_active(epoch, fresh=False)
         with self.lock:
+            if hasattr(self.adapter, 'monitor_stats'):
+                self.state['observation'] = dict(self.adapter.monitor_stats)
+            if snapshot is None:
+                self.state['connection'] = self.adapter.status()
+                return None
             resumed = self._needs_fresh_snapshot
             saved, self._resume_ready = self._resume_ready, None
             if resumed:
@@ -207,6 +225,10 @@ class Controller:
                 self.burst_schedule.clear()
                 if saved[3] and saved[3][0] == self.state['contact']['id']:
                     self._filled_draft = (saved[3][0], self.revision, saved[3][2])
+            if self._interrupted_signature == self._generation_signature():
+                self.pending_at = None
+                self.burst_schedule.clear()
+                self.state['generation'] = {'status': 'interrupted', 'error': None}
         return snapshot
 
     def get_state(self) -> dict:
@@ -217,6 +239,7 @@ class Controller:
             result["state_sequence"] = self._state_sequence
             result["reply_epoch"] = self.reply_batches.epoch
             result["revision"] = self.revision
+            result['waiting_for_change'] = self.pending_at is None and not self.generating
             contact = self.state.get('contact')
             person = self.contact_preferences.get(contact['id'], contact) if contact else {}
             asking = self.state['mode'] != 'demo' and self.settings.values['ask_before_assist']
@@ -254,7 +277,11 @@ class Controller:
         if not isinstance(payload, dict):
             return {"ok": False, "error": "请求格式无效"}
         try:
-            if method not in {'get_state', 'get_api_usage', 'close'}:
+            if method in {'save_settings', 'save_contact_preferences', 'set_paused', 'demo'}:
+                # Local UI stays usable when one of the source windows is covered.
+                if self.window_group is not None and not self.window_group.is_active():
+                    self._require_active(fresh=False)
+            elif method not in {'get_state', 'get_api_usage', 'close', 'minimize'}:
                 self._require_active(fresh=False)
             if method in SCOPED_OPERATIONS:
                 self._require_assist()
@@ -309,6 +336,7 @@ class Controller:
                     if not self.state["contact"] or not self.state["messages"]:
                         raise ValueError("先读取一段聊天，或者试试演示场景")
                     self.model_availability.clear()
+                    self._interrupted_signature = None
                     if self.state.get('generation_blocked_reason') and self._automatic_image_candidate() is None:
                         self._require_readable_target()
                     self.intent = str(payload.get("intent", ""))[:300]
@@ -597,7 +625,7 @@ class Controller:
 
     def _apply_snapshot(self, snapshot: dict) -> None:
         if not self._assist_allowed(snapshot['contact']):
-            self._apply_disabled_contact(snapshot['contact'])
+            self._apply_disabled_contact(snapshot['contact'], snapshot)
             return
         self._observe_voice_job(snapshot)
         contact = snapshot["contact"]
@@ -747,6 +775,11 @@ class Controller:
     def _model_signature(self):
         return tuple(self.settings.values.get(k) for k in ('base_url', 'model', 'api_type', 'max_tokens', 'protected_key'))
 
+    def _generation_signature(self):
+        payload = (self.last_signature, self._reply_preferences(), self._model_signature(),
+            self.settings.values['history_limit'])
+        return hashlib.sha256(repr(payload).encode('utf-8')).hexdigest()
+
     def _maybe_generate(self) -> None:
         if not self._sync_activity() or self._needs_fresh_snapshot or self.state['paused']:
             return
@@ -755,6 +788,10 @@ class Controller:
                 self.pending_at = None
                 return
             if self.generating or self.pending_at is None or time.monotonic() < self.pending_at:
+                return
+            if self._interrupted_signature == self._generation_signature():
+                self.pending_at = None
+                self.state['generation'] = {'status': 'interrupted', 'error': None}
                 return
             if not self.state["contact"]:
                 self.pending_at = None
@@ -786,6 +823,7 @@ class Controller:
                 self.state["generation"] = {"status": "unconfigured", "error": None, "model": self.settings.values["model"]}
                 return
             self.generating = True
+            self._running_signature = self._generation_signature()
             revision = self.revision
             reply_epoch = self.reply_batches.epoch
             contact_id = self.state["contact"]["id"]
@@ -806,7 +844,7 @@ class Controller:
             def check_reply_access():
                 self._require_active(activity_epoch)
                 self._require_assist(contact_id)
-                if reply_epoch != self.reply_batches.epoch:
+                if revision != self.revision or reply_epoch != self.reply_batches.epoch:
                     raise ActivityPaused('此轮辅助已取消。')
             config['activity_check'] = check_reply_access
             def progress(status):
@@ -869,6 +907,7 @@ class Controller:
             finally:
                 with self.lock:
                     self.generating = False
+                    self._running_signature = None
                     if self._activity_active and not self._needs_fresh_snapshot and revision != self.revision and self.pending_at is not None:
                         self.state['generation'] = {'status': 'collecting', 'error': None, 'source': None}
 
@@ -910,7 +949,7 @@ class Controller:
                         if self._voice_job is not None and now >= self._voice_job['deadline']:
                             self._observe_voice_job({'contact': self.state['contact'] or {'id': None}, 'messages': self.state['messages']})
                     if now >= next_poll or self._needs_fresh_snapshot:
-                        next_poll = now + 1.2
+                        next_poll = now + 2.0
                         if self.state["mode"] == "wechat" and not self.state["paused"] and (self.window_group is None or self.window_group.is_active()):
                             try:
                                 self._poll_current()
@@ -937,6 +976,17 @@ class Controller:
                                     self.state['attachment_status'] = {'status':'error','message':str(error)}
                     self._maybe_prepare_voice()
                     self._maybe_prepare_image()
+                    # A message/chat can change between periodic probes and the
+                    # quiet deadline. Recheck on the UIA worker before submitting.
+                    if not self.generating and self.pending_at is not None and time.monotonic() >= self.pending_at:
+                        try:
+                            self._poll_current()
+                        except ActivityPaused:
+                            continue
+                        except Exception as error:
+                            with self.lock:
+                                self._connection_error(str(error), getattr(error, 'code', 'error'))
+                            continue
                     self._maybe_generate()
             finally:
                 self.current_adapter.close()
@@ -1438,7 +1488,7 @@ class Controller:
                     backend.focus(backend.window())
             with self.lock:
                 self.state["mode"] = "wechat"
-            snapshot = self._poll_current()
+            snapshot = self._poll_current(force=True)
             self._follow(snapshot.get("window_rect"))
             return {"message": "已连接当前微信聊天"}
         if operation == "load_history":

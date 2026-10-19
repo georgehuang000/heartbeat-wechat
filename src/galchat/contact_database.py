@@ -218,6 +218,36 @@ class ContactDatabase:
         self._media_refs = media_refs
         return output
 
+    def change_token(self):
+        """Local file metadata only; a wake signal, never a message version.
+
+        Include WAL/checkpoint replacement, contact renames and local annotations.
+        Unknown metadata disables caching rather than freezing a conversation.
+        """
+        check_activity(getattr(self, 'activity_check', None))
+        base = getattr(self._reader, 'account_dir', None)
+        if not base:
+            return None
+        try:
+            storage = Path(base) / 'db_storage'
+            if not storage.is_dir():
+                return None
+            entries = []
+            def failed(error):
+                raise error
+            for folder, _, names in os.walk(storage, onerror=failed):
+                for name in names:
+                    if re.fullmatch(r'(?:contact|message_\d+)\.db(?:-wal|-journal)?', name):
+                        path = Path(folder) / name
+                        stamp = path.stat()
+                        entries.append((str(path.relative_to(storage)), stamp.st_size,
+                            stamp.st_mtime_ns, stamp.st_ctime_ns, stamp.st_ino))
+            annotations = self.directory / 'attachment-text'
+            stamp = annotations.stat().st_mtime_ns if annotations.exists() else None
+            return (str(base), tuple(sorted(entries)), stamp) if entries else None
+        except OSError:
+            return None
+
     def media_source(self, contact_id, message_id):
         check_activity(getattr(self, 'activity_check', None))
         value = self._media_refs.get((contact_id, message_id))

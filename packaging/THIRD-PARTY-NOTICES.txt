@@ -1,8 +1,12 @@
-心动微信 0.1.0 · Third-party notices
+心动微信 0.1.1 · Third-party notices
 
 This file collects dependency metadata and available license texts from the build environment.
 It does not replace the individual upstream terms. The app package does not include user data.
-WebView2 Runtime is a prerequisite, distributed by Microsoft. This release links to the official download page.
+The standard package includes Microsoft's unmodified, signed WebView2 Evergreen Bootstrapper.
+When the Runtime is missing, the Bootstrapper downloads it directly from Microsoft during setup.
+The offline package includes Microsoft's signed Evergreen Standalone Installer (x64) instead.
+The Runtime is provided by Microsoft under its own terms and is installed only when missing.
+https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution
 https://developer.microsoft.com/microsoft-edge/webview2
 Inno Setup: https://github.com/jrsoftware/issrc/tree/is-6_7_3
 Chinese translation: Files/Languages/Unofficial/ChineseSimplified.isl, same tag.

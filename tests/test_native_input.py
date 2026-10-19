@@ -34,6 +34,16 @@ def test_empty_voice_placeholder_only_is_removed_when_value_is_known_empty():
         _input_contact(edit('按住鼠标 语音输入文字'))
 
 
+@pytest.mark.parametrize('suffix', ['长按鼠标 语音输入', '长按鼠标语音输入', '按住鼠标 语音输入'])
+def test_new_voice_placeholder_does_not_become_part_of_contact_identity(suffix):
+    name = '测试联系人' + suffix
+    assert _input_contact(edit(name)) == '测试联系人'
+    assert _input_contact(edit(name, '已有草稿')) == name
+    assert _input_contact(edit(name, None)) == name
+    with pytest.raises(WeChatError):
+        _input_contact(edit(suffix))
+
+
 def test_native_current_reads_exact_name_without_capture_or_model():
     actual = edit('千总', '手动草稿')
     viewport = SimpleNamespace(ClassName='QWidget', AutomationId='chat_input_field.qt_scrollarea_viewport',

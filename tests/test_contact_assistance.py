@@ -60,11 +60,12 @@ def test_opt_in_persists_under_identity_not_remark_or_avatar(tmp_path):
     assert restored.get(contact_key('account', 'room@chatroom'))['assistance_enabled'] is False
 
 
-def test_disabled_chat_has_identity_but_no_context_or_jobs(app):
+def test_disabled_chat_has_local_text_but_no_persisted_context_or_jobs(app):
     state = select(app, 'alice', kind='image')
     assert state['contact']['name'] == 'alice'
     assert state['generation']['status'] == 'contact_disabled'
-    assert state['messages'] == state['choices'] == state['memories'] == []
+    assert len(state['messages']) == 1
+    assert state['choices'] == state['memories'] == []
     assert app.pending_at is None and app._prepared_context is None
     assert app._automatic_image_candidate() is None
     assert app._automatic_voice_candidate() is None
@@ -79,7 +80,7 @@ def test_only_explicit_chat_remains_enabled_after_switching(app):
     select(app, 'alice', enabled=True)
     assert len(app.state['messages']) == 1 and app.pending_at is not None
     select(app, 'bob')
-    assert app.state['messages'] == [] and app.pending_at is None
+    assert app.state['messages'][0]['id'] == 'bob-1' and app.pending_at is None
     select(app, 'alice')
     assert app.state['contact_preferences']['assistance_enabled'] is True
     assert len(app.state['messages']) == 1
@@ -108,7 +109,7 @@ def test_enable_only_changes_current_contact_then_disable_clears_permissions(app
         'revision': app.revision, 'assistance_enabled': False})
     assert result['ok'] is True
     assert app.pending_at is app._image_job is app._voice_job is None
-    assert app.state['messages'] == app.state['choices'] == []
+    assert len(app.state['messages']) == 1 and app.state['choices'] == []
     assert app.state['generation']['status'] == 'contact_disabled'
     assert app.contact_preferences.get('bob')['assistance_enabled'] is False
 
@@ -162,7 +163,7 @@ def test_disable_cancels_inflight_progress_and_late_choices(app):
     assert app.state['generation']['status'] == 'contact_disabled'
 
 
-def test_reader_checks_allowlist_before_recent_or_title_model():
+def test_reader_recognizes_locally_before_model_permission_without_title_model():
     reads = []
     database = SimpleNamespace(resolve=lambda name: {'id': name, 'name': name},
         recent=lambda *args: reads.append(args) or [])
@@ -174,7 +175,8 @@ def test_reader_checks_allowlist_before_recent_or_title_model():
     adapter.current = current
     result = adapter.snapshot()
     assert result['contact']['id'] == 'bob' and result['messages'] == []
-    assert result['assistance_disabled'] is True and reads == []
+    assert result['assistance_disabled'] is True and len(reads) == 1
+    assert adapter.status()['can_read'] is True
     assert adapter.status()['can_fill'] is False
 
 
@@ -241,7 +243,7 @@ def test_global_off_assists_everyone_and_on_restores_their_choices(app):
     result = app.dispatch('save_settings', {'ask_before_assist': True})
     assert result['ok'] and not result['state']['assistance']['enabled']
     assert not result['state']['assistance']['needs_choice']
-    assert result['state']['messages'] == []
+    assert len(result['state']['messages']) == 1
 
 
 def test_switching_mode_preserves_finished_options_when_contact_stays_allowed(app):

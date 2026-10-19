@@ -198,6 +198,47 @@ def test_late_generator_result_is_discarded_without_blocking_the_provider(app):
     assert app.model_availability.blocked(app._model_signature()) is None
 
 
+def test_interrupted_input_is_not_automatically_resubmitted_on_repeated_returns(app):
+    entered, released = threading.Event(), threading.Event()
+    calls = []
+    def generate(*_a, **_k):
+        calls.append(1)
+        entered.set()
+        assert released.wait(3)
+        return RESULT
+    app.engine = SimpleNamespace(generate=generate)
+    app.pending_at = 0
+    app._maybe_generate()
+    assert entered.wait(2)
+    app.window_group.active = False
+    app._sync_activity()
+    released.set()
+    finish(app)
+    for _ in range(3):
+        app.window_group.active = True
+        app._poll_current()
+        app._maybe_generate()
+        assert app.state['generation']['status'] == 'interrupted'
+        assert app.pending_at is None
+        app.window_group.active = False
+        app._sync_activity()
+    assert len(calls) == 1 and app.state['choices'] == []
+    app.window_group.active = True
+    app.adapter.snapshot = lambda: snapshot(text='新的虚构消息', mid='a2')
+    app._poll_current()
+    assert app.pending_at is not None  # New content is a new task.
+
+
+def test_manual_retry_can_resubmit_an_interrupted_generation(app):
+    app._interrupted_signature = app._generation_signature()
+    app.pending_at = None
+    app.engine = SimpleNamespace(generate=lambda *_a, **_k: RESULT)
+    response = app.dispatch('generate')
+    assert response['ok']
+    finish(app)
+    assert len(app.state['choices']) == 3
+
+
 def test_background_http_result_cannot_start_fact_review_or_format_repair():
     active = True
     calls, usage = [], []

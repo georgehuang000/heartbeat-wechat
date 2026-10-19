@@ -22,9 +22,8 @@ test('a disabled contact never displays stale choices or media work as active',(
   generation:{status:'generating'},attachment_status:{status:'processing',kind:'voice'}};
  const result=replyActivity(state);
  assert.equal(result.animated,false);
- assert.match(result.label,/尚未/);
- assert.equal(result.action,'settings');
- assert.equal(result.settingsPage,'context');
+ assert.equal(result.label,'');
+ assert.equal(result.action,'enable_contact');
  assert.equal(replyActivity({...state,activity:{active:false}}).label,'后台已暂停');
 });
 
@@ -32,6 +31,39 @@ test('background suspension and resume checks override stale activity animations
  const state={contact:{id:'A'},generation:{status:'generating'},attachment_status:{status:'processing',kind:'voice'}};
  assert.deepEqual(replyActivity({...state,activity:{active:false,needs_refresh:true}}),{label:'后台已暂停',animated:false});
  assert.deepEqual(replyActivity({...state,activity:{active:true,needs_refresh:true}}),{label:'正在确认当前聊天…',animated:false});
+});
+
+test('a failed chat connection exposes recovery instead of refreshing forever',()=>{
+ for(const code of ['native_input_lost','unsupported_version','ambiguous_window']){
+  const state={contact:null,activity:{active:true,needs_refresh:true},
+   connection:{status:code,can_read:false,message:'聊天读取失败，请重新识别。'}};
+  assert.deepEqual(replyActivity(state),{label:state.connection.message,animated:false,
+   action:'connect',actionLabel:'重新识别聊天'});
+ }
+});
+
+test('window exposure pause states override errors and stale generation animations',()=>{
+ for(const [reason,label] of [['panel_hidden','心动微信已收起'],['wechat_hidden','同时展开'],['window_obscured','被遮挡']]){
+  const state={activity:{active:false,reason},connection:{status:'error',can_read:false,message:'旧错误'},generation:{status:'generating'}};
+  const result=replyActivity(state);
+  assert.match(result.label,new RegExp(label));
+  assert.equal(result.animated,false);
+  assert.equal(result.action,undefined);
+ }
+});
+
+test('idle and interrupted work have distinct static explanations',()=>{
+ const state={contact:{id:'A'},waiting_for_change:true,settings:{auto_generate:true}};
+ assert.deepEqual(replyActivity({...state,generation:{status:'collecting'}}),{label:'等待新消息…',animated:false});
+ assert.equal(replyActivity({...state,generation:{status:'interrupted'}}).action,'generate');
+ assert.equal(replyActivity({...state,generation:{status:'ready'},choices:[{id:'c'}]}).label,'');
+});
+
+test('a disconnected chat cannot offer to enable an unidentified person',()=>{
+ const state={contact:null,assistance:{enabled:false,needs_choice:false},
+  connection:{status:'disconnected',can_read:false},activity:{active:true,needs_refresh:true}};
+ assert.equal(replyActivity(state).action,undefined);
+ assert.equal(replyActivity(state).label,'正在确认当前聊天…');
 });
 
 test('manual generation mode does not pretend incoming messages started a model call',()=>{

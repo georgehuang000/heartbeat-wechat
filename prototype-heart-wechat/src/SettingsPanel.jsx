@@ -104,7 +104,7 @@ export function SettingsPanel({prefs,state,contact,person,role,rolePreviews,role
           <section className="settings-option-section generation-options">
             <div className="settings-option-main"><h4><GearSix weight="fill" size={20}/>按联系人询问辅助</h4>
               <Toggle label="按联系人询问辅助" checked={prefs.ask_before_assist===true} disabled={disabled} onChange={v=>onUpdate('ask_before_assist',v)}/></div>
-            <p>{prefs.ask_before_assist?'初次进入聊天时询问，选择会记住。':'所有聊天均辅助；开启后逐人询问。'}</p>
+            <p>{prefs.ask_before_assist?'本地识别自动进行；开启聊天后才向模型提交内容，选择会记住。':'所有聊天均可使用模型；开启此选项后逐人询问。'}</p>
           </section>
           <section className="settings-option-section generation-options">
             <div className="settings-option-main"><h4><Chats size={20}/>严格等待 3 秒</h4>

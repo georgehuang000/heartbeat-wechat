@@ -58,6 +58,17 @@ artifacts/private/
 !/scripts/build_windows.ps1
 !/scripts/preview_website.ps1
 !/scripts/verify_background_pause_package.py
+!/scripts/build_installer.ps1
+!/scripts/verify_installer.ps1
+!/scripts/sync_installer_download.ps1
+!/scripts/collect_installer_notices.py
+!/scripts/installer_resource_audit.py
+!/scripts/windows_signing.ps1
+!/scripts/sign_inno_file.ps1
+!/scripts/prepare_webview2.ps1
+!/scripts/webview2_runtime.ps1
+!/scripts/test_webview2_prerequisite.ps1
+!/scripts/test_release_guards.ps1
 !/scripts/probe_native_chat_input.py
 !/scripts/probe_native_voice.py
 !/scripts/probe_reply_quality.py

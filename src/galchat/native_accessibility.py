@@ -56,6 +56,28 @@ def validate_gate(data, rva=KNOWN_GATE_RVA):
 
 KNOWN_DLL_SHA256 = '8f7406a8a465e851ee10eaecccb572d0e5b4e00d480c770938c714c396097b74'
 
+REVIEWED_BUILDS = {
+    KNOWN_VERSION: {'sha256': KNOWN_DLL_SHA256, 'gate_rva': KNOWN_GATE_RVA},
+    # 2026-10-19: local PE/instruction and reversible UIA verification.
+    '4.1.15.55': {
+        'sha256': '6fbbba536b04c0a24730710f540887a53f4eaa24398e4f94905d9b4a36148595',
+        'gate_rva': 0x0B39C9D8,
+    },
+}
+
+
+class UnreviewedWeChatBuild(ValueError):
+    def __init__(self, version):
+        self.version = version
+        super().__init__(f'微信 {version} 尚未通过当前程序的兼容检查')
+
+
+def reviewed_build(version, dll_sha256):
+    build = REVIEWED_BUILDS.get(version)
+    if build is None or build['sha256'] != dll_sha256:
+        raise UnreviewedWeChatBuild(version)
+    return build
+
 
 class WindowsGate:
     """Own one process handle; only the reviewed writable data byte is mutable."""
@@ -77,19 +99,18 @@ class WindowsGate:
             version = win32api.GetFileVersionInfo(str(path), '\\')
             actual = '.'.join(str(n) for n in (version['FileVersionMS'] >> 16, version['FileVersionMS'] & 65535,
                                              version['FileVersionLS'] >> 16, version['FileVersionLS'] & 65535))
-            if actual != KNOWN_VERSION:
-                raise ValueError('unreviewed Weixin version')
             data = path.read_bytes()
-            if hashlib.sha256(data).hexdigest() != KNOWN_DLL_SHA256:
-                raise ValueError('unreviewed Weixin DLL checksum')
-            evidence = validate_gate(data)
+            build = reviewed_build(actual, hashlib.sha256(data).hexdigest())
+            gate_rva = build['gate_rva']
+            evidence = validate_gate(data, gate_rva)
             # Compare the loaded instruction too; disk identity alone is insufficient.
             ref_rva = int(evidence['code_reference_rva'], 16)
             instruction = self._read(int(base) + ref_rva, 18)
             match = PATTERN.fullmatch(instruction)
-            if match is None or ref_rva + 16 + struct.unpack('<i', match.group('disp'))[0] != KNOWN_GATE_RVA:
+            if match is None or ref_rva + 16 + struct.unpack('<i', match.group('disp'))[0] != gate_rva:
                 raise ValueError('loaded accessibility instruction differs')
-            self.address = int(base) + KNOWN_GATE_RVA
+            self.address = int(base) + gate_rva
+            self.version = actual
         except Exception:
             self.close()
             raise
@@ -165,7 +186,7 @@ class NativeAccessibility:
                 if self._gate.read() != 1:
                     raise OSError('accessibility activation not accepted')
                 self._key = key
-                self.diagnostic = {'status': 'active', 'version': KNOWN_VERSION}
+                self.diagnostic = {'status': 'active', 'version': getattr(self._gate, 'version', KNOWN_VERSION)}
                 return True
             except ActivityPaused:
                 self._attempted = None
@@ -173,6 +194,8 @@ class NativeAccessibility:
             except Exception as error:
                 self._restore()
                 self.diagnostic = {'status': 'unsupported', 'reason': str(error)}
+                if isinstance(error, UnreviewedWeChatBuild):
+                    self.diagnostic.update(code='unsupported_version', version=error.version)
                 return False
 
     def _restore(self):

@@ -43,14 +43,24 @@ function serviceFailure(generation){
 }
 
 export function replyActivity(state){
- if(state?.activity?.active===false)return {label:'后台已暂停',animated:false};
+ if(state?.activity?.active===false){
+  const labels={panel_hidden:'心动微信已收起，辅助已暂停。',wechat_hidden:'请同时展开微信和心动微信。',
+   window_obscured:'窗口被遮挡，辅助已暂停。',window_hidden:'窗口不可见，辅助已暂停。',
+   visibility_unknown:'暂时无法确认窗口状态，已暂停。'};
+  return {label:labels[state.activity.reason]||'后台已暂停',animated:false};
+ }
+ const connection=state?.connection;
+ if(connection?.can_read===false&&connection.message&&
+    !['connected','disconnected','connecting'].includes(connection.status))
+  return {label:connection.message,animated:false,action:'connect',actionLabel:'重新识别聊天'};
  if(state?.activity?.needs_refresh)return {label:'正在确认当前聊天…',animated:false};
  if(state?.paused)return {label:'已暂停',animated:false};
  if(!state?.contact)return {label:'等待当前聊天…',animated:false};
  if(state.assistance?.needs_choice)return {label:'',animated:false,action:'ask_contact'};
  if(state.assistance?.enabled===false||state.mode!=='demo'&&!state.assistance&&state.contact_preferences?.assistance_enabled===false)
-  return {label:'尚未为这个聊天开启辅助。',animated:false,action:'settings',actionLabel:'设置此人的辅助',settingsPage:'context'};
+  return {label:'',animated:false,action:'enable_contact'};
  const attachment=state.attachment_status,generation=state.generation||{};
+ if(generation.status==='interrupted')return {label:'上次生成已中断，可以重新生成。',animated:false,action:'generate'};
  const failure=serviceFailure(generation);
  if(failure)return failure;
  if(state.choices?.length&&['holding','collecting'].includes(generation.status))
@@ -68,6 +78,8 @@ export function replyActivity(state){
  if(generation.status==='reviewing')return {label:'再斟酌一下…',animated:true};
  if(generation.status==='collecting'&&state.settings?.auto_generate===false)
   return {label:'等你准备好，再想下一句。',animated:false,action:'generate'};
+ if(state.waiting_for_change&&['idle','collecting'].includes(generation.status))
+  return {label:'等待新消息…',animated:false};
  if(['generating','collecting'].includes(generation.status))return {label:'正在想下一句…',animated:true};
  if(generation.error){
   const error=String(generation.error),code=generation.error_code;

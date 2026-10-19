@@ -341,7 +341,7 @@ def test_account_reads_release_windows_snapshot_file(tmp_path):
         replacement.replace(snapshot)  # Fails on Windows if a SQLite handle leaks.
 
 
-def test_native_group_raises_pair_and_preserves_minimization(tmp_path,monkeypatch):
+def test_native_group_follows_without_raising_and_preserves_explicit_minimization(tmp_path,monkeypatch):
     from galchat.window_group import WindowGroup
     from types import SimpleNamespace
     import ctypes
@@ -391,7 +391,7 @@ def test_native_group_raises_pair_and_preserves_minimization(tmp_path,monkeypatc
     group._frame()
     assert len(restored)==1
     assert gui.rects[2]==(908,100,1308,700)
-    assert gui.positions[0]==(1,0x0001|0x0002|0x0010)
+    assert all(h == 2 and flags & 0x0004 for h, flags in gui.positions)
     before=len(gui.positions)
     group._frame()
     assert len(gui.positions)==before
@@ -415,7 +415,10 @@ def test_native_group_raises_pair_and_preserves_minimization(tmp_path,monkeypatc
     group.minimize();assert gui.iconic
     group._frame();assert gui.iconic and group.diagnostic['status']=='minimized'
     gui.fg=999;group._frame();assert gui.iconic
-    gui.fg=1;group._frame();assert not gui.iconic and group.diagnostic['status']=='attached'
+    gui.fg=1;group._frame();assert gui.iconic and group.diagnostic['status']=='minimized'
+    assert 9 not in gui.show_commands  # Clicking WeChat cannot reopen the helper.
+    gui.iconic=False;group._frame()  # User restores it from the taskbar.
+    assert not group.manual_minimized and group.diagnostic['status']=='attached'
 
 
 def test_group_hides_managed_webview_before_form_not_just_hwnd(monkeypatch):

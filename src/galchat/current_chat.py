@@ -26,6 +26,8 @@ class CurrentChatAdapter:
         self.accessibility = accessibility if accessibility is not None else NativeAccessibility()
         self.identity_mode = None
         self.contact_enabled = None
+        self._poll_key = None
+        self.monitor_stats = {'checks': 0, 'full_reads': 0, 'idle': False}
 
     def _uia_current(self, window):
         if self.auto is None:
@@ -53,6 +55,10 @@ class CurrentChatAdapter:
             self.identity_mode = 'uia'
             return native
         if require_native or self.contact_enabled is not None:
+            diagnostic = getattr(self.accessibility, 'diagnostic', {})
+            if diagnostic.get('code') == 'unsupported_version':
+                raise WeChatError('unsupported_version',
+                    f"当前微信 {diagnostic['version']} 尚未适配，请更新心动微信后重试。")
             raise WeChatError('native_input_lost', '尚未确认微信原生聊天控件，已暂停操作；请重新选择聊天。')
         self.identity_mode = 'visual'
         window, image = self.visual._capture()
@@ -84,9 +90,30 @@ class CurrentChatAdapter:
         return {'name': self._identity['contact_name'], 'window': window, 'image': image,
                 'result': deepcopy(self._identity), 'mode': 'visual', 'signature': signature}
 
-    def snapshot(self):
-        # A title-model request must not happen before checking the allowlist.
-        gui = self.current(require_native=True) if self.contact_enabled else self.current()
+    def poll(self, *, force=False):
+        """Check identity and source metadata before reading/decoding history."""
+        self.monitor_stats['checks'] += 1
+        gui = self.current(require_native=True)
+        token_reader = getattr(self.database, 'change_token', None)
+        token = token_reader() if callable(token_reader) else None
+        key = (gui['name'], gui['window']['fingerprint'], tuple(gui['window']['rect']),
+            self.settings_provider()['history_limit'], token)
+        check_activity(getattr(self, 'activity_check', None))
+        if not force and token is not None and key == self._poll_key:
+            self.monitor_stats['idle'] = True
+            return None
+        self.monitor_stats['idle'] = False
+        self._poll_key = None  # A failed/inconsistent read must not seed a cache.
+        snapshot = self.snapshot(_gui=gui)
+        after = token_reader() if callable(token_reader) else None
+        if token is not None and token == after:
+            self._poll_key = key
+        return snapshot
+
+    def snapshot(self, *, _gui=None):
+        # Local reading is independent of model permission. Native identity
+        # remains mandatory in the desktop runtime; no paid title fallback.
+        gui = _gui or (self.current(require_native=True) if self.contact_enabled else self.current())
         expected_account = (self.settings_provider().get('visual_config') or {}).get('account_name')
         if expected_account and self.database.reader.get_self_info().get('nick_name') != expected_account:
             raise WeChatError('account_changed', '数据库账号与已确认的账号名称不同，请在设置里重新核对账号。')
@@ -103,10 +130,7 @@ class CurrentChatAdapter:
             gui = self.current(force=True)
             contact = self.database.resolve(gui['name'])
         check_activity(getattr(self, 'activity_check', None))
-        if self.contact_enabled and not self.contact_enabled(contact):
-            self._last = {'contact': contact, 'messages': [], 'mode': 'database',
-                          'coverage': '此聊天尚未开启辅助，未读取聊天记录。', 'assistance_disabled': True}
-            return deepcopy(self._last)
+        self.monitor_stats['full_reads'] += 1
         rows = self.database.recent(contact, self.settings_provider()['history_limit'])
         # A database refresh must not attach its result to a chat opened midway.
         fresh = self.current(require_native=True) if self.contact_enabled else self.current()
@@ -124,12 +148,14 @@ class CurrentChatAdapter:
                       'coverage': f"当前联系人最近{len(rows)}条（设置上限{self.settings_provider()['history_limit']}条）",
                       'mode': 'database', 'generation_blocked_reason':
                       blocked}
+        if self.contact_enabled and not self.contact_enabled(contact):
+            self._last['assistance_disabled'] = True
         return deepcopy(self._last)
 
     def status(self):
         disabled = bool(self._last and self._last.get('assistance_disabled'))
         return {'status': 'connected', 'message': '已识别当前聊天 · 辅助未开启' if disabled else '已跟随当前聊天 · 数据库读取',
-                'can_read': self._last is not None and not disabled, 'can_fill': self._last is not None and not disabled, 'mode': 'database',
+                'can_read': self._last is not None, 'can_fill': self._last is not None and not disabled, 'mode': 'database',
                 'identity_mode': self.identity_mode, 'native_accessibility': dict(self.accessibility.diagnostic)}
 
     def load_history(self, **kwargs):

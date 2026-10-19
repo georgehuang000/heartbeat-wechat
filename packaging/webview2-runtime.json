@@ -1,0 +1,10 @@
+{
+  "version": "155.0.4283.45",
+  "architecture": "x64",
+  "mode": "evergreenStandalone",
+  "file": "MicrosoftEdgeWebView2RuntimeInstallerX64.exe",
+  "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7c7c0e6f-8cb5-406a-8e51-df0c62011e55/MicrosoftEdgeWebView2RuntimeInstallerX64.exe",
+  "sha256": "2a6add76c37bfa872eb8c2b22d45b3216b8e2a1f193e0774006340ff62ac5fa0",
+  "manifest_source": "https://github.com/microsoft/winget-pkgs/blob/master/manifests/m/Microsoft/EdgeWebView2Runtime/155.0.4283.45/Microsoft.EdgeWebView2Runtime.installer.yaml",
+  "checked_at": "2026-10-16"
+}

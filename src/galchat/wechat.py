@@ -110,10 +110,7 @@ def _input_contact(edit):
     # Qt can append its voice-input placeholder to an empty input's name.
     # Never remove a suffix from a populated or unreadable input.
     if _value(edit)[1] == '':
-        for suffix in ('按住鼠标 语音输入文字', '按住鼠标语音输入文字'):
-            if name.endswith(suffix):
-                name = name[:-len(suffix)].strip()
-                break
+        name = re.sub(r'(?:长按|按住)鼠标\s*语音输入(?:文字)?$', '', name).strip()
     return _clean_contact(name)
 
 

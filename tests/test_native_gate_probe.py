@@ -3,6 +3,7 @@ import importlib.util
 from pathlib import Path
 import struct
 import pytest
+from galchat.native_accessibility import reviewed_build, REVIEWED_BUILDS, UnreviewedWeChatBuild
 
 path = Path(__file__).resolve().parents[1] / 'scripts/probe_native_chat_input.py'
 spec = importlib.util.spec_from_file_location('native_gate_probe', path)
@@ -30,6 +31,20 @@ def pe_fixture():
 def test_known_gate_must_have_code_and_writable_data_evidence():
     data, _ = pe_fixture()
     assert probe.validate_gate(data)['gate_rva'] == hex(probe.KNOWN_GATE_RVA)
+
+
+@pytest.mark.parametrize('version', ['4.1.13.65', '4.1.15.55'])
+def test_only_reviewed_version_and_exact_dll_hash_select_the_gate(version):
+    build = REVIEWED_BUILDS[version]
+    assert reviewed_build(version, build['sha256']) == build
+    with pytest.raises(UnreviewedWeChatBuild) as error:
+        reviewed_build(version, '0' * 64)
+    assert error.value.version == version
+
+
+def test_unknown_version_cannot_reuse_a_reviewed_dll_gate():
+    with pytest.raises(UnreviewedWeChatBuild):
+        reviewed_build('4.1.99.99', REVIEWED_BUILDS['4.1.15.55']['sha256'])
 
 
 @pytest.mark.parametrize('change', ['architecture', 'nonwritable', 'executable', 'wrong_reference', 'missing_core', 'bad_pe'])

@@ -1,12 +1,25 @@
 #ifndef AppVersion
-  #define AppVersion "0.1.0"
+  #define AppVersion "0.1.1"
 #endif
 #define ProjectRoot SourcePath + ".."
 #ifndef PayloadFile
   #define PayloadFile ProjectRoot + "\release\installer-payload\心动微信.exe"
 #endif
-#if FileExists(ProjectRoot + "\build\installer-prerequisites\MicrosoftEdgeWebview2Setup.exe")
-  #define BundleWebView
+#ifndef WebViewInstallerFile
+  #error Use scripts/build_installer.ps1 to provide the verified WebView2 installer.
+#endif
+#ifndef WebViewMode
+  #define WebViewMode "standard"
+#endif
+#if WebViewMode == "standard"
+  #define WebViewInstallerName "MicrosoftEdgeWebview2Setup.exe"
+#elif WebViewMode == "offline"
+  #define WebViewInstallerName "MicrosoftEdgeWebView2RuntimeInstallerX64.exe"
+#else
+  #error Unsupported WebViewMode.
+#endif
+#ifndef WebViewInstallerSha256
+  #error The pinned Microsoft WebView2 SHA-256 is required.
 #endif
 
 [Setup]
@@ -32,7 +45,11 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 DisableWelcomePage=no
+#if WebViewMode == "offline"
+InfoBeforeFile={#ProjectRoot}\packaging\install-notes-offline.txt
+#else
 InfoBeforeFile={#ProjectRoot}\packaging\install-notes.txt
+#endif
 CloseApplications=no
 RestartApplications=no
 SetupLogging=yes
@@ -52,12 +69,10 @@ Name: "chinesesimplified"; MessagesFile: "vendor\ChineseSimplified.isl"
 Name: "desktopicon"; Description: "创建桌面快捷方式"; GroupDescription: "快捷方式："
 
 [Files]
+Source: "{#WebViewInstallerFile}"; DestName: "{#WebViewInstallerName}"; Hash: "{#WebViewInstallerSha256}"; Flags: dontcopy noencryption nocompression
 Source: "{#PayloadFile}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#ProjectRoot}\packaging\quick-start.txt"; DestDir: "{app}"; DestName: "使用说明.txt"; Flags: ignoreversion
 Source: "{#ProjectRoot}\packaging\THIRD-PARTY-NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
-#ifdef BundleWebView
-Source: "{#ProjectRoot}\build\installer-prerequisites\MicrosoftEdgeWebview2Setup.exe"; Flags: dontcopy
-#endif
 
 [Icons]
 Name: "{group}\心动微信"; Filename: "{app}\心动微信.exe"; WorkingDir: "{app}"; Check: not WizardNoIcons
@@ -73,7 +88,11 @@ const
 procedure OpenWebViewDownload(Sender: TObject);
 var ErrorCode: Integer;
 begin
+#if WebViewMode == "standard"
+  ShellExec('open', 'https://github.com/georgehuang000/heartbeat-wechat/releases/tag/v{#AppVersion}',
+#else
   ShellExec('open', 'https://developer.microsoft.com/microsoft-edge/webview2',
+#endif
     '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
 end;
 
@@ -84,7 +103,11 @@ begin
   DownloadLink.Parent := WizardForm;
   DownloadLink.Left := ScaleX(12);
   DownloadLink.Top := WizardForm.CancelButton.Top + ScaleY(7);
-  DownloadLink.Caption := '下载 WebView2（Microsoft 官方）';
+#if WebViewMode == "standard"
+  DownloadLink.Caption := '组件下载失败？获取完整离线包';
+#else
+  DownloadLink.Caption := 'WebView2 安装帮助（Microsoft）';
+#endif
   DownloadLink.Font.Color := clBlue;
   DownloadLink.Cursor := crHand;
   DownloadLink.OnClick := @OpenWebViewDownload;
@@ -110,29 +133,29 @@ begin
     and (Release >= 528040);
 end;
 
+function RunBundledWebViewSetup(var ExitCode: Integer): Boolean;
+begin
+  ExtractTemporaryFile('{#WebViewInstallerName}');
+#if WebViewMode == "standard"
+  WizardForm.PreparingLabel.Caption := '正在从 Microsoft 下载并安装界面运行组件，请保持联网并稍候…';
+#else
+  WizardForm.PreparingLabel.Caption := '正在安装内置的界面运行组件，无需另行下载，请稍候…';
+#endif
+  WizardForm.Refresh;
+  Result := Exec(ExpandConstant('{tmp}\{#WebViewInstallerName}'), '/silent /install',
+    '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
+end;
+
+#include "webview2-prerequisite.iss"
+
 function PrepareToInstall(var NeedsRestart: Boolean): String;
-var ExitCode: Integer;
 begin
   Result := '';
   if not HasDotNet48 then begin
     Result := '需要 Microsoft .NET Framework 4.8。请先通过 Windows 更新安装，再重新运行安装包。';
     exit;
   end;
-  if not HasWebView then begin
-#ifdef BundleWebView
-    ExtractTemporaryFile('MicrosoftEdgeWebview2Setup.exe');
-    WizardForm.StatusLabel.Caption := '正在安装 Microsoft Edge WebView2 Runtime，需要联网…';
-    if not Exec(ExpandConstant('{tmp}\MicrosoftEdgeWebview2Setup.exe'), '/silent /install',
-        '', SW_HIDE, ewWaitUntilTerminated, ExitCode) then begin
-      Result := '无法启动 WebView2 安装程序。请从 Microsoft 官方页面安装 WebView2 Runtime 后重试。';
-      exit;
-    end;
-    if not HasWebView then
-      Result := 'WebView2 Runtime 尚未安装成功（退出码 ' + IntToStr(ExitCode) + '）。请检查网络，或从 Microsoft 官方页面安装后重试。';
-#else
-    Result := '需要 Microsoft Edge WebView2 Runtime。请点击窗口左下方的 Microsoft 官方下载入口，安装 Evergreen Runtime 后重新运行本安装包。当前软件安装包不含 WebView2 Runtime，安装程序不会在缺少依赖时继续。';
-#endif
-  end;
+  Result := EnsureWebView2(NeedsRestart);
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

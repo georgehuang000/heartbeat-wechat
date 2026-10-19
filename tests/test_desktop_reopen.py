@@ -105,6 +105,8 @@ def group(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, 'System', NS(Action=lambda callback: callback))
     monkeypatch.setitem(sys.modules, 'System.Windows.Forms', NS(FormWindowState=NS(Normal='Normal')))
     form = Form()
+    gui.IsIconic = lambda hwnd: form.WindowState == 'Minimized'
+    gui.IsWindowVisible = lambda hwnd: form.Visible
     controller = NS(window=NS(native=form), settings=NS(directory=tmp_path, values={'maximized_mode':'hide'}))
     value = WindowGroup(controller, NS(gui=gui, api=NS(), con=NS()))
     value._hwnd = lambda: 2
@@ -159,15 +161,15 @@ def test_launch_without_identifiable_wechat_keeps_a_usable_panel(tmp_path, monke
     assert value.diagnostic['status'] == 'manual_open'
 
 
-def test_reading_guard_restores_a_manually_opened_panel_after_capture(tmp_path, monkeypatch):
+def test_reading_guard_keeps_both_windows_visible_instead_of_hiding_for_capture(tmp_path, monkeypatch):
     value, form, gui, calls = group(tmp_path, monkeypatch)
     value.reopen()
     def unavailable(): raise RuntimeError('no current WeChat window')
     value._target_window = unavailable
     with value.capture_guard():
-        assert not form.Visible and not form.webview.Visible and not value.visible
+        assert form.Visible and form.webview.Visible and value.visible
         value._frame()
-        assert not form.Visible and not form.webview.Visible
+        assert form.Visible and form.webview.Visible
     value._frame()
     assert form.Visible and form.webview.Visible and value.visible
 
